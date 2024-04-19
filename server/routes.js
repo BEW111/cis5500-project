@@ -46,12 +46,12 @@ const getGenrePopularity = async (req, res) => {
 };
 
 // Route for finding artists in highly collaborative and popular playlists
+// TODO: collaborative is almost always 0, so see if there's a query that makes more sense
 const getPopularCollaborations = async (req, res) => {
   const query = `
     WITH CollabPlaylists AS (
       SELECT p.pid as id
       FROM Playlist p
-      // WHERE p.collaborative = TRUE AND p.num_followers > 10
     ),
     RankedArtists AS (
       SELECT 

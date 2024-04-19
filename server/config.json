@@ -1,0 +1,9 @@
+{
+  "rds_host": "cis550-hw3.cfggooy6eup4.us-east-2.rds.amazonaws.com",
+  "rds_port": "3306",
+  "rds_user": "admin",
+  "rds_password": "testPassword",
+  "rds_db": "SWIFTIFY",
+  "server_host": "localhost",
+  "server_port": "8080"
+}

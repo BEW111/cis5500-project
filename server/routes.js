@@ -115,7 +115,7 @@ const getArtistInfoByCountry = async (req, res) => {
   JOIN PlaylistTrack pt ON t.id = pt.trackId
   JOIN ArtistTags at ON a.mbid = at.artist_id
   JOIN Tags tg ON at.tag_id = tg.id
-  WHERE a.country = ? AND a.ambiguous = FALSE  -- Assuming ambiguous means the artist's origin is uncertain
+  WHERE a.country = ?
   GROUP BY a.mbid
   ORDER BY sum(a.scrobbles) DESC, num_playlists DESC
   LIMIT 10;

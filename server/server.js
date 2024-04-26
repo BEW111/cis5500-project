@@ -14,7 +14,7 @@ app.use(
 // provide their handlers that we implemented in routes.js
 app.get("/music/genre_popularity", routes.getGenrePopularity);
 app.get("/artists/popular_collaborations", routes.getPopularCollaborations);
-app.get('/artists/:country', routes.getArtistInfoByCountry);  
+app.get('/artists/details/:country', routes.getArtistInfoByCountry);  
 // app.get('/artists/:country', routes.getArtistsByCountry);  
 // app.get('/artists/Germany', routes.getArtistsByCountry);  
 

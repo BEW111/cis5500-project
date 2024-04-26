@@ -80,6 +80,77 @@ const getPopularCollaborations = async (req, res) => {
   });
 };
 
+const getArtistsByCountry = async (req, res) => {
+  const { country } = req.params;  // Get country from URL parameter
+
+  const query = `
+    SELECT a.name, a.mbid
+    FROM Artist a
+    WHERE a.country = ? AND a.country IS NOT NULL
+    ORDER BY a.name;
+  `;
+
+  connection.query(query, [country], (err, results) => {
+    if (err) {
+      console.error("Error fetching artists data:", err);
+      res.status(500).json({ error: "Internal server error" });
+    } else {
+      res.json(results);
+    }
+  });
+};
+
+const getArtistInfoByCountry = async (req, res) => {
+  const { country } = req.params; 
+  const query = `
+  SELECT
+  a.name,
+  a.listeners,
+  a.scrobbles,
+  COUNT(DISTINCT pt.pid) AS num_playlists,
+  COUNT(DISTINCT t.id) AS num_tracks,
+  GROUP_CONCAT(DISTINCT tg.name ORDER BY tg.name) AS tags
+  FROM Artist a
+  JOIN Track t ON a.mbid = t.artist_id
+  JOIN PlaylistTrack pt ON t.id = pt.trackId
+  JOIN ArtistTags at ON a.mbid = at.artist_id
+  JOIN Tags tg ON at.tag_id = tg.id
+  WHERE a.country = ?
+  GROUP BY a.mbid
+  ORDER BY sum(a.scrobbles) DESC, num_playlists DESC
+  LIMIT 10;
+  `;
+  connection.query(query, [country], (err, results) => {
+    if (err) {
+      console.error("Error fetching artist details:", err);
+      res.status(500).json({ error: "Internal server error" });
+    } else {
+      res.json(results);
+    }
+  });
+};
+
+
+// const getArtistsByCountry = async (req, res) => {
+//   // Directly using 'Germany' in the query to avoid using parameters
+//   const query = `
+//     SELECT a.name, a.mbid
+//     FROM Artist a
+//     WHERE a.country = 'Germany' AND a.country IS NOT NULL AND a.country != '<null>'
+//     ORDER BY a.name;
+//   `;
+
+//   connection.query(query, (err, results) => {
+//     if (err) {
+//       console.error("Error fetching artists from Germany:", err);
+//       res.status(500).json({ error: "Internal server error" });
+//     } else {
+//       res.json(results);
+//     }
+//   });
+// };
+
+
 // // Route 1: GET /author/:type
 // const author = async function(req, res) {
 //   // TODO (TASK 1): replace the values of name and pennkey with your own
@@ -328,4 +399,6 @@ module.exports = {
   // search_songs,
   getGenrePopularity,
   getPopularCollaborations,
+  getArtistsByCountry,
+  getArtistInfoByCountry,
 };

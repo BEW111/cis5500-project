@@ -80,6 +80,46 @@ const getPopularCollaborations = async (req, res) => {
   });
 };
 
+const getArtistsByCountry = async (req, res) => {
+  const { country } = req.params;  // Get country from URL parameter
+
+  const query = `
+    SELECT a.name, a.mbid
+    FROM Artist a
+    WHERE a.country = ? AND a.country IS NOT NULL
+    ORDER BY a.name;
+  `;
+
+  connection.query(query, [country], (err, results) => {
+    if (err) {
+      console.error("Error fetching artists data:", err);
+      res.status(500).json({ error: "Internal server error" });
+    } else {
+      res.json(results);
+    }
+  });
+};
+
+// const getArtistsByCountry = async (req, res) => {
+//   // Directly using 'Germany' in the query to avoid using parameters
+//   const query = `
+//     SELECT a.name, a.mbid
+//     FROM Artist a
+//     WHERE a.country = 'Germany' AND a.country IS NOT NULL AND a.country != '<null>'
+//     ORDER BY a.name;
+//   `;
+
+//   connection.query(query, (err, results) => {
+//     if (err) {
+//       console.error("Error fetching artists from Germany:", err);
+//       res.status(500).json({ error: "Internal server error" });
+//     } else {
+//       res.json(results);
+//     }
+//   });
+// };
+
+
 // // Route 1: GET /author/:type
 // const author = async function(req, res) {
 //   // TODO (TASK 1): replace the values of name and pennkey with your own
@@ -328,4 +368,5 @@ module.exports = {
   // search_songs,
   getGenrePopularity,
   getPopularCollaborations,
+  getArtistsByCountry,
 };

@@ -81,7 +81,7 @@ const getPopularCollaborations = async (req, res) => {
 };
 
 const getArtistsByCountry = async (req, res) => {
-  const { country } = req.params;  // Get country from URL parameter
+  const { country } = req.params; // Get country from URL parameter
 
   const query = `
     SELECT a.name, a.mbid
@@ -101,7 +101,7 @@ const getArtistsByCountry = async (req, res) => {
 };
 
 const getArtistInfoByCountry = async (req, res) => {
-  const { country } = req.params; 
+  const { country } = req.params;
   const query = `
   SELECT
   a.name,
@@ -130,7 +130,6 @@ const getArtistInfoByCountry = async (req, res) => {
   });
 };
 
-
 // const getArtistsByCountry = async (req, res) => {
 //   // Directly using 'Germany' in the query to avoid using parameters
 //   const query = `
@@ -150,6 +149,27 @@ const getArtistInfoByCountry = async (req, res) => {
 //   });
 // };
 
+const search_songs = async (req, res) => {
+  const limit = req.query.limit ?? 10;
+  const offset = req.query.offset ?? 0;
+
+  const query = `
+  select id, track_name
+  from Track
+  where track_name like '%${req.query.q}%'
+  limit ${limit}
+  offset ${offset}
+  `;
+
+  connection.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching popular collaborations data:", err);
+      res.status(500).json({ error: "Internal server error" });
+    } else {
+      res.json(results);
+    }
+  });
+};
 
 // // Route 1: GET /author/:type
 // const author = async function(req, res) {
@@ -401,4 +421,5 @@ module.exports = {
   getPopularCollaborations,
   getArtistsByCountry,
   getArtistInfoByCountry,
+  search_songs,
 };

@@ -1,13 +1,13 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { CssBaseline, ThemeProvider } from '@mui/material'
-import { indigo, amber } from '@mui/material/colors'
+import { CssBaseline, ThemeProvider } from "@mui/material";
+import { indigo, amber } from "@mui/material/colors";
 import { createTheme } from "@mui/material/styles";
 
-import NavBar from './components/NavBar';
-import HomePage from './pages/HomePage';
-import AlbumsPage from './pages/AlbumsPage';
-import SongsPage from './pages/SongsPage';
-import AlbumInfoPage from './pages/AlbumInfoPage'
+import NavBar from "./components/NavBar";
+import HomePage from "./pages/HomePage";
+import AlbumsPage from "./pages/AlbumsPage";
+import SongsPage from "./pages/SongsPage.tsx";
+import AlbumInfoPage from "./pages/AlbumInfoPage";
 
 // createTheme enables you to customize the look and feel of your app past the default
 // in this case, we only change the color scheme

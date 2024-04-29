@@ -80,6 +80,28 @@ const getPopularCollaborations = async (req, res) => {
   });
 };
 
+const search_songs = async (req, res) => {
+  const limit = req.query.limit ?? 10;
+  const offset = req.query.offset ?? 0;
+
+  const query = `
+  select id, track_name
+  from Track
+  where track_name like '%${req.query.q}%'
+  limit ${limit}
+  offset ${offset}
+  `;
+
+  connection.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching popular collaborations data:", err);
+      res.status(500).json({ error: "Internal server error" });
+    } else {
+      res.json(results);
+    }
+  });
+};
+
 // // Route 1: GET /author/:type
 // const author = async function(req, res) {
 //   // TODO (TASK 1): replace the values of name and pennkey with your own
@@ -328,4 +350,5 @@ module.exports = {
   // search_songs,
   getGenrePopularity,
   getPopularCollaborations,
+  search_songs,
 };

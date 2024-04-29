@@ -37,8 +37,10 @@ export default function NavBar() {
       <Container maxWidth='xl'>
         <Toolbar disableGutters>
           <NavText href='/' text='SWIFTIFY' isMain />
+          <NavText href='/login' text='LOGIN' />
           <NavText href='/albums' text='ALBUMS' />
           <NavText href='/songs' text='SONGS' />
+          <NavText href='map' text="MAP" />
         </Toolbar>
       </Container>
     </AppBar>

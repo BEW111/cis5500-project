@@ -2,13 +2,33 @@ const express = require("express");
 const cors = require("cors");
 const config = require("./config");
 const routes = require("./routes");
+var indexRouter = require('./routes/index');
+var authRouter = require('./routes/auth');
+const session = require('express-session');
+var passport = require('passport');
 
 const app = express();
 app.use(
   cors({
-    origin: "*",
+    origin: "http://localhost:3000",
+    credentials: true
   })
 );
+
+app.use(session({
+  secret: 'secret-key',
+  resave: false,
+  saveUninitialized: true
+}));
+
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use('/', authRouter);
+app.use('/', indexRouter);
+
+
 
 // We use express to define our various API endpoints and
 // provide their handlers that we implemented in routes.js

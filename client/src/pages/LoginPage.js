@@ -1,9 +1,19 @@
 import { Button, TextField, Box, Container, Paper, Typography } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
+import { UserContext } from '../App';
 
 export default function LoginPage() {
+  const { user, setUser } = useContext(UserContext);
   const [showSignUp, setShowSignUp] = useState(false);
   const [showSignIn, setShowSignIn] = useState(false);
+
+  useEffect(() => {
+    // Reset the user value if it is set (Log Out Functionality)
+    if (user) {
+      setUser(null);
+    }
+  }, []);
+
 
   return (
     <Container component="main" maxWidth="xs">

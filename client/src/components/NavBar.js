@@ -1,5 +1,7 @@
 import { AppBar, Container, Toolbar, Typography } from '@mui/material'
 import { NavLink } from 'react-router-dom';
+import React, { useContext } from 'react';
+import { UserContext } from '../App';
 
 // The hyperlinks in the NavBar contain a lot of repeated formatting code so a
 // helper component NavText local to the file is defined to prevent repeated code.
@@ -32,12 +34,13 @@ function NavText({ href, text, isMain }) {
 // to make the component look nice. Feel free to try changing the formatting
 // props to how it changes the look of the component.
 export default function NavBar() {
+  const { user } = useContext(UserContext);
   return (
     <AppBar position='static'>
       <Container maxWidth='xl'>
         <Toolbar disableGutters>
           <NavText href='/' text='SWIFTIFY' isMain />
-          <NavText href='/login' text='LOGIN' />
+          <NavText href='/login' text={user? 'LOGOUT' : 'LOGIN'} />
           <NavText href='/albums' text='ALBUMS' />
           <NavText href='/songs' text='SONGS' />
           <NavText href='map' text="MAP" />

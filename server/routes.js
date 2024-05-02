@@ -17,6 +17,41 @@ connection.connect((err) => err && console.log(err));
  * WARM UP ROUTES *
  ******************/
 
+
+const song = async function(req, res) {
+  const id = req.params.id;
+
+  connection.query(`
+    SELECT T.track_name AS track_name, T.album_name AS album_name, A.mbid AS artist_id, A.name AS artist_name, A.country AS country, A.listeners AS listeners, Tags.name AS tag
+    FROM Track T JOIN Artist A ON T.artist_id = A.mbid JOIN ArtistTags AT ON AT.artist_id = T.artist_id JOIN Tags ON Tags.id = AT.tag_id
+    WHERE T.id = '${id}'
+  `, (err, data) => {
+    if (err || data.length === 0) {
+      console.log(err);
+      res.json({});
+    } else {
+      res.json(data[0]);
+    }
+  });
+}
+
+// const recommendation1 = async function(req, res) {
+//   const id = req.params.id;
+
+//   connection.query(`
+//     SELECT T.track_name AS track_name, T.album_name AS album_name, A.mbid AS artist_id, A.name AS artist_name, A.country AS country, A.listeners AS listeners, Tags.name AS tag
+//     FROM Track T JOIN Artist A ON T.artist_id = A.mbid JOIN ArtistTags AT ON AT.artist_id = T.artist_id JOIN Tags ON Tags.id = AT.tag_id
+//     WHERE T.id = '${id}'
+//   `, (err, data) => {
+//     if (err || data.length === 0) {
+//       console.log(err);
+//       res.json({});
+//     } else {
+//       res.json(data[0]);
+//     }
+//   });
+// }
+
 // Route for getting the changing popularity of music genres over time
 const getGenrePopularity = async (req, res) => {
   const query = `
@@ -417,6 +452,8 @@ module.exports = {
   // top_songs,
   // top_albums,
   // search_songs,
+  song,
+  // recommendation1,
   getGenrePopularity,
   getPopularCollaborations,
   getArtistsByCountry,

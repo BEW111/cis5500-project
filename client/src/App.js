@@ -8,6 +8,7 @@ import HomePage from "./pages/HomePage";
 import AlbumsPage from "./pages/AlbumsPage";
 import SongsPage from "./pages/SongsPage.tsx";
 import AlbumInfoPage from "./pages/AlbumInfoPage";
+import SongInfoPage from "./pages/SongInfoPage";
 import MapPage from "./pages/MapPage";
 
 // createTheme enables you to customize the look and feel of your app past the default
@@ -34,6 +35,7 @@ export default function App() {
           <Route path="/albums" element={<AlbumsPage />} />
           <Route path="/albums/:album_id" element={<AlbumInfoPage />} />
           <Route path="/songs" element={<SongsPage />} />
+          <Route path="/song/:id" element={<SongInfoPage />} />
           <Route path="/map" element={<MapPage />} />
         </Routes>
       </BrowserRouter>

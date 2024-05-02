@@ -9,6 +9,8 @@ const config = require("../config.json");
 const dotenv = require("dotenv").config();
 var LocalStrategy = require('passport-local');
 var crypto = require('crypto');
+const SpotifyStrategy = require('passport-spotify').Strategy;
+
 
 // Creates MySQL connection using database credential provided in config.json
 // Do not edit. If the connection fails, make sure to check that config.json is filled out correctly
@@ -29,6 +31,9 @@ connection.connect((err) => err && console.log(err));
 
 router.get('/login/federated/google', passport.authenticate('google'));
 
+router.get('/auth/spotify', passport.authenticate('spotify', {
+  scope: ['user-read-email', 'user-read-private']
+}));
 
 router.post('/login/password', (req, res, next) => {
   console.log('POST request received on /login/password');
@@ -87,9 +92,58 @@ passport.use(new GoogleStrategy({
 }
 ));
 
-router.get('/oauth2/redirect/google', passport.authenticate('google'), (req, res) => {
+
+router.get('/oauth2/redirect/google', passport.authenticate('google', { failureRedirect: `http://localhost:3000/login` }), (req, res) => {
   res.redirect(`http://localhost:3000?user=${JSON.stringify(req.user)}`);
 });
+
+// Spotify log in set up
+passport.use(new SpotifyStrategy({
+  clientID: process.env['SPOTIFY_CLIENT_ID'],
+  clientSecret: process.env['SPOTIFY_CLIENT_SECRET'],
+  callbackURL: '/auth/spotify/callback',
+  scope: ['user-read-email', 'user-read-private']  // Adjust scopes as needed
+},
+function(accessToken, refreshToken, expires_in, profile, done) {
+  // Assuming 'spotify' as the provider name and profile.id as the Spotify user ID
+  connection.query('SELECT * FROM federated_credentials WHERE provider = ? AND subject = ?', ['spotify', profile.id], function(err, results) {
+    if (err) { return done(err); }
+    if (results.length === 0) {
+      // Insert new user
+      connection.query('INSERT INTO users (name) VALUES (?)', [profile.displayName], function(err, results) {
+        if (err) { return done(err); }
+
+        var id = results.insertId;
+        // Insert federated credentials for the new user
+        connection.query('INSERT INTO federated_credentials (user_id, provider, subject) VALUES (?, ?, ?)', [id, 'spotify', profile.id], function(err, results) {
+          if (err) { return done(err); }
+          var user = {
+            id: id,
+            name: profile.displayName
+          };
+          return done(null, user);
+        });
+      });
+    } else {
+      // User exists, fetch user details
+      connection.query('SELECT * FROM users WHERE id = ?', [results[0].user_id], function(err, results) {
+        if (err) { return done(err); }
+        if (results.length === 0) { return done(null, false); }  // No user found
+        return done(null, results[0]);
+      });
+    }
+  });
+}
+));
+
+router.get(
+  '/auth/spotify/callback',
+  passport.authenticate('spotify', { failureRedirect: `http://localhost:3000/login` }),
+  function(req, res) {
+    // Successful authentication, redirect home.
+    res.redirect(`http://localhost:3000?user=${JSON.stringify(req.user)}`);
+  }
+);
 
 // Standard log in below
 passport.use(new LocalStrategy(function verify(username, password, cb) {

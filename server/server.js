@@ -6,6 +6,8 @@ var indexRouter = require('./routes/index');
 var authRouter = require('./routes/auth');
 const session = require('express-session');
 var passport = require('passport');
+var bodyParser = require('body-parser')
+
 
 const app = express();
 app.use(
@@ -24,9 +26,12 @@ app.use(session({
 
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
+
 
 app.use('/', authRouter);
-app.use('/', indexRouter);
+// app.use('/', indexRouter);
 
 
 

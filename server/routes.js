@@ -35,13 +35,40 @@ const song = async function(req, res) {
   });
 }
 
+const recommendation1 = async function(req, res) {
+  const artistId = req.params.artistId;
+  const country = req.params.country;
+  const tag = req.params.tag;
+  const listeners = req.params.listeners;
+
+  connection.query(`
+    SELECT T.track_name AS track_name, T.id AS track_id
+    FROM Track T JOIN Artist A ON T.artist_id = A.mbid JOIN ArtistTags AT ON AT.artist_id = T.artist_id JOIN Tags ON Tags.id = AT.tag_id
+    WHERE A.name != '${artistId}'
+    ORDER BY RAND();
+  `, (err, data) => {
+    if (err || data.length === 0) {
+      console.log(err);
+      res.json({});
+    } else {
+      res.json(data[0]);
+    }
+  });
+}
+
 // const recommendation1 = async function(req, res) {
-//   const id = req.params.id;
+//   const artistId = req.params.artistId;
+//   const country = req.params.country;
+//   const tag = req.params.tag;
+//   const listeners = req.params.listeners;
 
 //   connection.query(`
 //     SELECT T.track_name AS track_name, T.album_name AS album_name, A.mbid AS artist_id, A.name AS artist_name, A.country AS country, A.listeners AS listeners, Tags.name AS tag
 //     FROM Track T JOIN Artist A ON T.artist_id = A.mbid JOIN ArtistTags AT ON AT.artist_id = T.artist_id JOIN Tags ON Tags.id = AT.tag_id
-//     WHERE T.id = '${id}'
+//     WHERE A.name != '${artistId}'
+//       AND A.country = '${country}'
+//       AND Tags.name = '${tag}'
+//     ORDER BY RAND();
 //   `, (err, data) => {
 //     if (err || data.length === 0) {
 //       console.log(err);
@@ -453,7 +480,7 @@ module.exports = {
   // top_albums,
   // search_songs,
   song,
-  // recommendation1,
+  recommendation1,
   getGenrePopularity,
   getPopularCollaborations,
   getArtistsByCountry,

@@ -45,7 +45,7 @@ export default function SongInfoPage() {
             <h2>Background Info:</h2>
             <p>Album: {songData.album_name}</p>
             <p>Artist: {songData.artist_name}</p>
-            <p>Artist ID: {songData.artist_id}</p>
+            <p>Artist ID: {artistId}</p>
             <p>Country: {country}</p>
             <p>Listeners: {listeners}</p>
             <p>Tag: {tag}</p>

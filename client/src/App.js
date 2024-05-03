@@ -11,6 +11,7 @@ import SongsPage from './pages/SongsPage';
 import AlbumInfoPage from './pages/AlbumInfoPage'
 import LoginPage from './pages/LoginPage';
 
+import SongInfoPage from "./pages/SongInfoPage";
 import MapPage from "./pages/MapPage";
 
 export const theme = createTheme({
@@ -62,7 +63,8 @@ export default function App() {
             <Route path="/albums/:album_id" element={<AlbumInfoPage />} />
             <Route path="/songs"  element={user ? <SongsPage /> : <Navigate to="/login" replace />} />
             <Route path="/login" element={<LoginPage />} />
-            <Route path="/map" element={user ? <MapPage /> : <Navigate to="/login" replace />} />
+            <Route path="/song/:id" element={<SongInfoPage />} />
+          <Route path="/map" element={user ? <MapPage /> : <Navigate to="/login" replace />} />
           </Routes>
         </BrowserRouter>
       </UserContext.Provider>

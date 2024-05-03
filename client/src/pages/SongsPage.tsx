@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { Box, Button, Card, Container, Link } from "@mui/material";
 import { Typography } from "@mui/material";
+import { NavLink } from 'react-router-dom';
 
 import React from "react";
 import TextField from "@mui/material/TextField";
@@ -121,7 +122,7 @@ export default function SongsPage() {
                 {song.track_name}
               </Typography>
               <Typography color="text.secondary" variant="body2">
-                Extra text here
+                <NavLink to={`/song/${song.id}`}>{song.track_name}</NavLink>
               </Typography>
             </Box>
           </Card>

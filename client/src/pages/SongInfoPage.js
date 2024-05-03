@@ -10,11 +10,13 @@ const config = require('../config.json');
 export default function SongInfoPage() {
     const { id } = useParams();
     const [artistId, setArtistId] = useState('');
+    const [nextTrackId, setNextTrackId] = useState('');
     const [country, setCountry] = useState('');
     const [tag, setTag] = useState('');
     const [listeners, setListeners] = useState('');
     const [songData, setSongData] = useState({});
     const [recommendation1Data, setRecommendation1Data] = useState({})
+    const [recommendation2Data, setRecommendation2Data] = useState({})
 
 
     useEffect(() => {   
@@ -24,6 +26,7 @@ export default function SongInfoPage() {
             resJson => {
                 const songReturn = resJson;
                 setSongData(songReturn);
+                setNextTrackId(songReturn.track_id);
                 setArtistId(songReturn.artist_id);
                 setTag(songReturn.tag);
                 setCountry(songReturn.country);
@@ -38,6 +41,12 @@ export default function SongInfoPage() {
           .then(resJson => setRecommendation1Data(resJson));
     }
 
+    const recommendation2 = () => {
+        fetch(`http://${config.server_host}:${config.server_port}/recommendation2/${nextTrackId}`)
+          .then(res => res.json())
+          .then(resJson => setRecommendation2Data(resJson));
+    }
+
     return (
         <Container>
             <Stack>
@@ -48,6 +57,8 @@ export default function SongInfoPage() {
             <p>Artist ID: {artistId}</p>
             <p>Country: {country}</p>
             <p>Listeners: {listeners}</p>
+            <p>Current Track Id: {id}</p>
+            <p>Next Track Id: {nextTrackId}</p>
             <p>Tag: {tag}</p>
             {/* <p>Duration: {songData.duration / 60}</p> */}
             </Stack>
@@ -56,6 +67,12 @@ export default function SongInfoPage() {
             </Button>
             <p>Recommendation1: <NavLink to={`/song/${recommendation1Data.track_id}`}>{recommendation1Data.track_name}</NavLink></p>
             
+            <Button onClick={() => recommendation2() } style={{ left: '50%', transform: 'translateX(-50%)' }}>
+                Recommendation 2
+            </Button>
+            <p>Recommendation2.1: <NavLink to={`/song/${recommendation2Data.track_id}`}>{recommendation2Data.track_id}</NavLink></p>
+            {/* <p>Recommendation2.2: <NavLink to={`/song/${recommendation2Data[1].track_id}`}>{recommendation2Data[1].track_id}</NavLink></p> */}
+
         </Container>
     );
 }

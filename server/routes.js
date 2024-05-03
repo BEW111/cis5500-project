@@ -22,7 +22,7 @@ const song = async function(req, res) {
   const id = req.params.id;
 
   connection.query(`
-    SELECT T.track_name AS track_name, T.album_name AS album_name, A.mbid AS artist_id, A.name AS artist_name, A.country AS country, A.listeners AS listeners, Tags.name AS tag
+    SELECT T.track_name AS track_name, T.id AS track_id, T.album_name AS album_name, A.mbid AS artist_id, A.name AS artist_name, A.country AS country, A.listeners AS listeners, Tags.name AS tag
     FROM Track T JOIN Artist A ON T.artist_id = A.mbid JOIN ArtistTags AT ON AT.artist_id = T.artist_id JOIN Tags ON Tags.id = AT.tag_id
     WHERE T.id = '${id}'
   `, (err, data) => {
@@ -45,6 +45,9 @@ const recommendation1 = async function(req, res) {
     SELECT T.track_name AS track_name, T.id AS track_id
     FROM Track T JOIN Artist A ON T.artist_id = A.mbid JOIN ArtistTags AT ON AT.artist_id = T.artist_id JOIN Tags ON Tags.id = AT.tag_id
     WHERE A.name != '${artistId}'
+      AND A.country = '${country}'
+      OR Tags.name = '${tag}'
+      AND A.listeners <= '${listeners * 0.5}' AND A.listeners >= '${listeners * 1.5}'
     ORDER BY RAND();
   `, (err, data) => {
     if (err || data.length === 0) {
@@ -55,6 +58,54 @@ const recommendation1 = async function(req, res) {
     }
   });
 }
+
+
+const recommendation2 = async function(req, res) {
+  const trackId = req.params.trackId;
+
+  connection.query(`
+  WITH PIDs AS (
+    SELECT PT.pid AS pid
+    FROM Track T JOIN PlaylistTrack PT ON T.id = PT.trackId
+    WHERE T.id = '${trackId}'
+  ) 
+    SELECT PT.trackId AS track_id, COUNT(*) AS appearances
+    FROM PIDs JOIN PlaylistTrack PT ON PIDs.pid = PT.pid
+    GROUP BY PT.trackId
+    HAVING PT.trackId != '${trackId}'
+    ORDER BY appearances
+  `, (err, data) => {
+    if (err || data.length === 0) {
+      console.log(err);
+      res.json({});
+    } else {
+      console.log(data.length)
+      console.log(data[0])
+      console.log(data[data.length - 1])
+      res.json(data[0]);
+    }
+  });
+}
+
+// const recommendation2 = async function(req, res) {
+//   const trackId = req.params.trackId;
+
+//   connection.query(`
+//   SELECT PT.trackId AS track_id, COUNT(*) AS appearances
+//   FROM Track T JOIN PlaylistTrack PT ON T.id = PT.trackId
+//   WHERE T.id = '${trackId}'
+//   GROUP BY PT.trackId
+//   ORDER BY appearances ASC
+//   LIMIT 1
+//   `, (err, data) => {
+//     if (err || data.length === 0) {
+//       console.log(err);
+//       res.json({});
+//     } else {
+//       res.json(data[0]);
+//     }
+//   });
+// }
 
 // const recommendation1 = async function(req, res) {
 //   const artistId = req.params.artistId;
@@ -481,6 +532,7 @@ module.exports = {
   // search_songs,
   song,
   recommendation1,
+  recommendation2,
   getGenrePopularity,
   getPopularCollaborations,
   getArtistsByCountry,

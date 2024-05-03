@@ -21,6 +21,7 @@ app.get("/artists/details/:country", routes.getArtistInfoByCountry);
 app.get("/search", routes.search_songs);
 app.get("/song/:id", routes.song);
 app.get("/recommendation1/:artistId/:country/:tag/:listeners", routes.recommendation1);
+app.get("/recommendation2/:trackId", routes.recommendation2);
 
 // app.get('/author/:type', routes.author);
 // app.get('/random', routes.random);

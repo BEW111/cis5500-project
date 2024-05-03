@@ -60,6 +60,35 @@ const recommendation1 = async function(req, res) {
 }
 
 
+// const recommendation2 = async function(req, res) {
+//   const trackId = req.params.trackId;
+
+//   connection.query(`
+//   WITH PIDs AS (
+//     SELECT PT.pid AS pid
+//     FROM Track T JOIN PlaylistTrack PT ON T.id = PT.trackId
+//     WHERE T.id = '${trackId}'
+//   ), WITH Tracks AS (
+//       SELECT PT.trackId AS track_id, COUNT(*) AS appearances
+//       FROM PIDs JOIN PlaylistTrack PT ON PIDs.pid = PT.pid
+//       GROUP BY PT.trackId
+//       HAVING PT.trackId != '${trackId}'
+//       ORDER BY appearances
+//   ) 
+//     SELECT 
+//   `, (err, data) => {
+//     if (err || data.length === 0) {
+//       console.log(err);
+//       res.json({});
+//     } else {
+//       console.log(data.length)
+//       console.log(data[0])
+//       console.log(data[data.length - 1])
+//       res.json(data[0]);
+//     }
+//   });
+// }
+
 const recommendation2 = async function(req, res) {
   const trackId = req.params.trackId;
 

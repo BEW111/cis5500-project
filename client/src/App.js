@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { indigo, amber } from "@mui/material/colors";
+import { orange, yellow } from "@mui/material/colors";
 import { createTheme } from "@mui/material/styles";
 
 import NavBar from "./components/NavBar";
@@ -17,8 +18,14 @@ import UserProfilePage from "./pages/UserProfilePage.tsx";
 
 export const theme = createTheme({
   palette: {
-    primary: indigo,
-    secondary: amber,
+    primary: {
+      main: orange[900], // Use a darker shade of orange
+    },
+    secondary: yellow,
+  },
+  typography: {
+    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+    fontWeightBold: 700,
   },
 });
 
@@ -56,8 +63,8 @@ export default function App() {
         <BrowserRouter>
           <NavBar />
           <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/albums" element={<AlbumsPage />} />
+            <Route path="/" element={<MapPage />} />
+            {/* <Route path="/albums" element={<AlbumsPage />} /> */}
             <Route path="/albums/:album_id" element={<AlbumInfoPage />} />
             <Route
               path="/songs"

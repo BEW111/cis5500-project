@@ -8,7 +8,7 @@ function ArtistDetails({ country }) {
 
         const fetchArtistDetails = async () => {
             console.log(`Fetching details for country: ${country}`);
-            const url = `http://localhost:8080/artists/details/${country}`;
+            const url = `http://localhost:8080/artists/list/${country}`;
             console.log(`URL: ${url}`);
             try {
                 const response = await fetch(url);
@@ -32,7 +32,7 @@ function ArtistDetails({ country }) {
                         <p>Listeners: {artist.listeners}</p>
                         <p>Scrobbles: {artist.scrobbles}</p>
                         <p>Playlists Featured In: {artist.num_playlists}</p>
-                        <p>Tags: {artist.tags}</p>
+                        <p>Tag: {artist.top_tag}</p>
                     </div>
                 ))
             ) : (

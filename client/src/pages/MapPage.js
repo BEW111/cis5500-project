@@ -62,7 +62,7 @@ function MapPage() {
                         </div>
                     ))}
                 </div>
-                {/* <ArtistDetails country={country} /> */}
+                <ArtistDetails country={country} />
             </div>
         </div>
     );

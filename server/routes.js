@@ -17,48 +17,54 @@ connection.connect((err) => err && console.log(err));
  * WARM UP ROUTES *
  ******************/
 
-
-const song = async function(req, res) {
+const song = async function (req, res) {
   const id = req.params.id;
 
-  connection.query(`
+  connection.query(
+    `
     SELECT T.track_name AS track_name, T.id AS track_id, T.album_name AS album_name, A.mbid AS artist_id, A.name AS artist_name, A.country AS country, A.listeners AS listeners, Tags.name AS tag
     FROM Track T JOIN Artist A ON T.artist_id = A.mbid JOIN ArtistTags AT ON AT.artist_id = T.artist_id JOIN Tags ON Tags.id = AT.tag_id
     WHERE T.id = '${id}'
-  `, (err, data) => {
-    if (err || data.length === 0) {
-      console.log(err);
-      res.json({});
-    } else {
-      res.json(data[0]);
+  `,
+    (err, data) => {
+      if (err || data.length === 0) {
+        console.log(err);
+        res.json({});
+      } else {
+        res.json(data[0]);
+      }
     }
-  });
-}
+  );
+};
 
-const recommendation1 = async function(req, res) {
+const recommendation1 = async function (req, res) {
   const artistId = req.params.artistId;
   const country = req.params.country;
   const tag = req.params.tag;
   const listeners = req.params.listeners;
 
-  connection.query(`
+  connection.query(
+    `
     SELECT T.track_name AS track_name, T.id AS track_id
     FROM Track T JOIN Artist A ON T.artist_id = A.mbid JOIN ArtistTags AT ON AT.artist_id = T.artist_id JOIN Tags ON Tags.id = AT.tag_id
     WHERE A.name != '${artistId}'
       AND A.country = '${country}'
       OR Tags.name = '${tag}'
-      AND A.listeners <= '${listeners * 0.5}' AND A.listeners >= '${listeners * 1.5}'
+      AND A.listeners <= '${listeners * 0.5}' AND A.listeners >= '${
+      listeners * 1.5
+    }'
     ORDER BY RAND();
-  `, (err, data) => {
-    if (err || data.length === 0) {
-      console.log(err);
-      res.json({});
-    } else {
-      res.json(data[0]);
+  `,
+    (err, data) => {
+      if (err || data.length === 0) {
+        console.log(err);
+        res.json({});
+      } else {
+        res.json(data[0]);
+      }
     }
-  });
-}
-
+  );
+};
 
 // const recommendation2 = async function(req, res) {
 //   const trackId = req.params.trackId;
@@ -74,8 +80,8 @@ const recommendation1 = async function(req, res) {
 //       GROUP BY PT.trackId
 //       HAVING PT.trackId != '${trackId}'
 //       ORDER BY appearances
-//   ) 
-//     SELECT 
+//   )
+//     SELECT
 //   `, (err, data) => {
 //     if (err || data.length === 0) {
 //       console.log(err);
@@ -89,10 +95,11 @@ const recommendation1 = async function(req, res) {
 //   });
 // }
 
-const recommendation2 = async function(req, res) {
+const recommendation2 = async function (req, res) {
   const trackId = req.params.trackId;
 
-  connection.query(`
+  connection.query(
+    `
   WITH PIDs AS (
     SELECT PT.pid AS pid
     FROM Track T JOIN PlaylistTrack PT ON T.id = PT.trackId
@@ -103,18 +110,20 @@ const recommendation2 = async function(req, res) {
     GROUP BY PT.trackId
     HAVING PT.trackId != '${trackId}'
     ORDER BY appearances
-  `, (err, data) => {
-    if (err || data.length === 0) {
-      console.log(err);
-      res.json({});
-    } else {
-      console.log(data.length)
-      console.log(data[0])
-      console.log(data[data.length - 1])
-      res.json(data[0]);
+  `,
+    (err, data) => {
+      if (err || data.length === 0) {
+        console.log(err);
+        res.json({});
+      } else {
+        console.log(data.length);
+        console.log(data[0]);
+        console.log(data[data.length - 1]);
+        res.json(data[0]);
+      }
     }
-  });
-}
+  );
+};
 
 // const recommendation2 = async function(req, res) {
 //   const trackId = req.params.trackId;
@@ -548,6 +557,113 @@ const search_songs = async (req, res) => {
 //   });
 // }
 
+// User/playlist routes
+const createUserPlaylist = async (req, res) => {
+  const { user_id } = req.body;
+  const defaultName = "My New Playlist";
+
+  const query = `
+    insert into UserPlaylist (uid, name)
+    values (${user_id}, '${defaultName}')
+  `;
+
+  connection.query(query, (err, results) => {
+    if (err) {
+      console.error("Error running query:", err);
+      res.status(500).json({ error: "Internal server error" });
+    } else {
+      res.json(results);
+    }
+  });
+};
+
+const renameUserPlaylist = async (req, res) => {
+  const { playlist_id, name } = req.body;
+  if (!playlist_id) {
+    return res.status(400).json({ error: "Playlist ID must be provided" });
+  }
+
+  const query = `
+    update UserPlaylist
+    set name = '${name}'
+    where uplaylist_id = ${playlist_id}
+  `;
+
+  connection.query(query, (err, results) => {
+    if (err) {
+      console.error("Error running query:", err);
+      res.status(500).json({ error: "Internal server error" });
+    } else {
+      res.json(results);
+    }
+  });
+};
+
+const userPlaylistAddSong = async (req, res) => {
+  const { playlist_id, track_id } = req.body;
+  if (!track_id) {
+    return res.status(400).json({ error: "Track ID must be provided" });
+  }
+
+  const query = `
+    insert into UserPlaylistTrack (uplaylist_id, track_id)
+    values (${playlist_id}, ${track_id})
+  `;
+
+  connection.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      res.status(500).json({ error: "Internal server error" });
+    } else {
+      res.json(results);
+    }
+  });
+};
+
+const getUserPlaylists = async (req, res) => {
+  const { user_id } = req.query;
+
+  if (!user_id) {
+    return res.status(400).json({ error: "User ID must be provided" });
+  }
+
+  const query = `
+    select *
+    from UserPlaylist
+    where uid = ${user_id}
+  `;
+
+  connection.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      res.status(500).json({ error: "Internal server error" });
+    } else {
+      res.json(results);
+    }
+  });
+};
+
+const getUserPlaylistTracks = async (req, res) => {
+  const { playlist_id } = req.params;
+
+  const query = `
+    select track_id, track_name, track_uri, duration
+    from UserPlaylist
+    join UserPlaylistTrack on UserPlaylist.uplaylist_id = UserPlaylistTrack.uplaylist_id
+    join Track on UserPlaylistTrack.track_id = Track.id
+    where UserPlaylist.uplaylist_id = ${playlist_id}
+  `;
+
+  connection.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      res.status(500).json({ error: "Internal server error" });
+    } else {
+      res.json(results);
+    }
+  });
+};
+
 module.exports = {
   // include all previous functions if they are part of this file
   // author,
@@ -567,4 +683,9 @@ module.exports = {
   getArtistsByCountry,
   getArtistInfoByCountry,
   search_songs,
+  userPlaylistAddSong,
+  createUserPlaylist,
+  renameUserPlaylist,
+  getUserPlaylistTracks,
+  getUserPlaylists,
 };

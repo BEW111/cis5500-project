@@ -2,38 +2,38 @@ const express = require("express");
 const cors = require("cors");
 const config = require("./config");
 const routes = require("./routes");
-var indexRouter = require('./routes/index');
-var authRouter = require('./routes/auth');
-const session = require('express-session');
-var passport = require('passport');
-var bodyParser = require('body-parser')
-
+var indexRouter = require("./routes/index");
+var authRouter = require("./routes/auth");
+const session = require("express-session");
+var passport = require("passport");
+var bodyParser = require("body-parser");
 
 const app = express();
 app.use(
   cors({
     origin: "http://localhost:3000",
-    credentials: true
+    credentials: true,
   })
 );
 
-app.use(session({
-  secret: 'secret-key',
-  resave: false,
-  saveUninitialized: true
-}));
+app.use(
+  session({
+    secret: "secret-key",
+    resave: false,
+    saveUninitialized: true,
+  })
+);
 
+// JSON parsing middleware
+app.use(express.json());
 
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
-
-app.use('/', authRouter);
+app.use("/", authRouter);
 // app.use('/', indexRouter);
-
-
 
 // We use express to define our various API endpoints and
 // provide their handlers that we implemented in routes.js
@@ -45,8 +45,17 @@ app.get("/artists/details/:country", routes.getArtistInfoByCountry);
 
 app.get("/search", routes.search_songs);
 app.get("/song/:id", routes.song);
-app.get("/recommendation1/:artistId/:country/:tag/:listeners", routes.recommendation1);
+app.get(
+  "/recommendation1/:artistId/:country/:tag/:listeners",
+  routes.recommendation1
+);
 app.get("/recommendation2/:trackId", routes.recommendation2);
+
+app.get("/user/playlists", routes.getUserPlaylists);
+app.get("/user/playlists/:playlist_id", routes.getUserPlaylistTracks);
+app.post("/user/playlists/create", routes.createUserPlaylist);
+app.post("/user/playlists/rename", routes.renameUserPlaylist);
+app.post("/user/playlists/song", routes.userPlaylistAddSong);
 
 // app.get('/author/:type', routes.author);
 // app.get('/random', routes.random);

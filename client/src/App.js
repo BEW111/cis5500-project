@@ -1,18 +1,19 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { CssBaseline, ThemeProvider } from '@mui/material'
-import { indigo, amber } from '@mui/material/colors'
+import { CssBaseline, ThemeProvider } from "@mui/material";
+import { indigo, amber } from "@mui/material/colors";
 import { createTheme } from "@mui/material/styles";
 
-import NavBar from './components/NavBar';
-import HomePage from './pages/HomePage';
-import AlbumsPage from './pages/AlbumsPage';
-import SongsPage from './pages/SongsPage';
-import AlbumInfoPage from './pages/AlbumInfoPage'
-import LoginPage from './pages/LoginPage';
+import NavBar from "./components/NavBar";
+import HomePage from "./pages/HomePage";
+import AlbumsPage from "./pages/AlbumsPage";
+import SongsPage from "./pages/SongsPage.tsx";
+import AlbumInfoPage from "./pages/AlbumInfoPage";
+import LoginPage from "./pages/LoginPage";
 
 import SongInfoPage from "./pages/SongInfoPage";
 import MapPage from "./pages/MapPage";
+import UserProfilePage from "./pages/UserProfilePage.tsx";
 
 export const theme = createTheme({
   palette: {
@@ -39,17 +40,14 @@ export default function App() {
   useEffect(() => {
     // Fetch the user's data when the app loads
     const urlParams = new URLSearchParams(window.location.search);
-    const user_ = JSON.parse(urlParams.get('user'));
+    const user_ = JSON.parse(urlParams.get("user"));
     if (user_) {
       setUser(user_);
       console.log(user_);
     }
-    
   }, []);
 
   console.log(user);
-
-  
 
   return (
     <ThemeProvider theme={theme}>
@@ -61,10 +59,22 @@ export default function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/albums" element={<AlbumsPage />} />
             <Route path="/albums/:album_id" element={<AlbumInfoPage />} />
-            <Route path="/songs"  element={user ? <SongsPage /> : <Navigate to="/login" replace />} />
+            <Route
+              path="/songs"
+              element={user ? <SongsPage /> : <Navigate to="/login" replace />}
+            />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/song/:id" element={<SongInfoPage />} />
-          <Route path="/map" element={user ? <MapPage /> : <Navigate to="/login" replace />} />
+            <Route
+              path="/profile"
+              element={
+                user ? <UserProfilePage /> : <Navigate to="/login" replace />
+              }
+            />
+            <Route
+              path="/map"
+              element={user ? <MapPage /> : <Navigate to="/login" replace />}
+            />
           </Routes>
         </BrowserRouter>
       </UserContext.Provider>

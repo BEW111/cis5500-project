@@ -272,6 +272,38 @@ const getArtistInfoByCountry = async (req, res) => {
   });
 };
 
+
+const getArtistStatsByCountry = async (req, res) => {
+  const { country } = req.params;
+
+  const query = `
+      WITH CanadianArtists AS (
+          SELECT mbid, country
+          FROM Artist
+          WHERE country = ?
+      )
+      SELECT
+          COUNT(t.id) AS total_tracks,
+          COUNT(pt.trackId) AS total_playlists,
+          AVG(ptc.track_count) AS avg_tracks_per_playlist
+      FROM CanadianArtists ca
+      JOIN Track t ON ca.mbid = t.artist_id
+      JOIN PlaylistTrack pt ON t.id = pt.trackId
+      JOIN PlaylistTrackCounts ptc ON pt.pid = ptc.pid
+      GROUP BY country;
+  `;
+
+  connection.query(query, [country], (err, results) => {
+      if (err) {
+          console.error("Error executing query:", err);
+          res.status(500).json({ error: "Internal server error" });
+      } else {
+          res.json(results[0] || {});
+      }
+  });
+};
+
+
 // const getArtistsByCountry = async (req, res) => {
 //   // Directly using 'Germany' in the query to avoid using parameters
 //   const query = `
@@ -567,4 +599,5 @@ module.exports = {
   getArtistsByCountry,
   getArtistInfoByCountry,
   search_songs,
+  getArtistStatsByCountry,
 };

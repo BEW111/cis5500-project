@@ -41,6 +41,8 @@ app.get("/music/genre_popularity", routes.getGenrePopularity);
 app.get("/artists/popular_collaborations", routes.getPopularCollaborations);
 app.get("/artists/details/:country", routes.getArtistInfoByCountry);
 app.get("/artists/stats/:country", routes.getArtistStatsByCountry);
+app.get("/genres/top/:country", routes.getTopGenresByCountry);
+app.get("/artists/list/:country", routes.getArtistListByCountry);
 // app.get('/artists/:country', routes.getArtistsByCountry);
 // app.get('/artists/Germany', routes.getArtistsByCountry);
 

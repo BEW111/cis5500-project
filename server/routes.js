@@ -24,7 +24,7 @@ const song = async function (req, res) {
     `
     SELECT T.track_name AS track_name, T.id AS track_id, T.album_name AS album_name, A.mbid AS artist_id, A.name AS artist_name, A.country AS country, A.listeners AS listeners, Tags.name AS tag
     FROM Track T JOIN Artist A ON T.artist_id = A.mbid JOIN ArtistTags AT ON AT.artist_id = T.artist_id JOIN Tags ON Tags.id = AT.tag_id
-    WHERE T.id = '${id}'
+    WHERE T.id = ${id}
   `,
     (err, data) => {
       if (err || data.length === 0) {

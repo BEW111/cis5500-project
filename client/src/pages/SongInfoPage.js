@@ -1,78 +1,244 @@
-import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { Container, Button, Stack} from '@mui/material';
-import { NavLink } from 'react-router-dom';
+import React from "react";
 
-const config = require('../config.json');
+import { useEffect, useState, useContext } from "react";
+import { useParams } from "react-router-dom";
+import {
+  Container,
+  Button,
+  Stack,
+  Typography,
+  IconButton,
+  Box,
+  List,
+  ListItem,
+  Checkbox,
+  ListItemText,
+  ListItemButton,
+  ListItemIcon,
+} from "@mui/material";
+import { NavLink } from "react-router-dom";
+import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import { UserContext } from "../App";
 
+const config = require("../config.json");
 
+const addToPlaylist = async (playlist_id, track_id) => {
+  const postData = { playlist_id: playlist_id, track_id: track_id };
+
+  fetch("http://localhost:8080/user/playlists/song", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(postData),
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    })
+    .then((data) => {
+      console.log("Success:", data);
+      //   onSuccess(); // Trigger the callback after successful creation
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
+};
 
 export default function SongInfoPage() {
-    const { id } = useParams();
-    const [artistId, setArtistId] = useState('');
-    const [nextTrackId, setNextTrackId] = useState('');
-    const [country, setCountry] = useState('');
-    const [tag, setTag] = useState('');
-    const [listeners, setListeners] = useState('');
-    const [songData, setSongData] = useState({});
-    const [recommendation1Data, setRecommendation1Data] = useState({})
-    const [recommendation2Data, setRecommendation2Data] = useState({})
+  const { id } = useParams();
+  const [artistId, setArtistId] = useState("");
+  const [nextTrackId, setNextTrackId] = useState("");
+  const [country, setCountry] = useState("");
+  const [tag, setTag] = useState("");
+  const [listeners, setListeners] = useState("");
+  const [songData, setSongData] = useState({});
+  const [recommendation1Data, setRecommendation1Data] = useState({});
+  const [recommendation2Data, setRecommendation2Data] = useState({});
 
+  const { user } = useContext(UserContext);
+  const [playlists, setPlaylists] = useState();
 
-    useEffect(() => {   
-        fetch(`http://${config.server_host}:${config.server_port}/song/${id}`)
-          .then(res => res.json())
-          .then(
-            resJson => {
-                const songReturn = resJson;
-                setSongData(songReturn);
-                setNextTrackId(songReturn.track_id);
-                setArtistId(songReturn.artist_id);
-                setTag(songReturn.tag);
-                setCountry(songReturn.country);
-                setListeners(songReturn.listeners)
-            } 
-        );
-      }, [id]);
+  const updatePlaylists = async () => {
+    if (user != null) {
+      const res = await fetch(
+        `http://localhost:8080/user/playlists?user_id=${user.id}`
+      );
+      const data = await res.json();
+      console.log(data);
+      setPlaylists(data);
+    }
+  };
+  useEffect(() => {
+    updatePlaylists();
+  }, []);
 
-    const recommendation1 = () => {
-        fetch(`http://${config.server_host}:${config.server_port}/recommendation1/${artistId}/${country}/${tag}/${listeners}`)
-          .then(res => res.json())
-          .then(resJson => setRecommendation1Data(resJson));
+  const [checked, setChecked] = React.useState([]);
+  const handleToggle = (value) => () => {
+    const currentIndex = checked.indexOf(value);
+    const newChecked = [...checked];
+
+    if (currentIndex === -1) {
+      newChecked.push(value);
+    } else {
+      newChecked.splice(currentIndex, 1);
     }
 
-    const recommendation2 = () => {
-        fetch(`http://${config.server_host}:${config.server_port}/recommendation2/${nextTrackId}`)
-          .then(res => res.json())
-          .then(resJson => setRecommendation2Data(resJson));
-    }
+    setChecked(newChecked);
+  };
 
-    return (
-        <Container>
-            <Stack>
-            <h1 style={{ fontSize: 64 }}>{songData.track_name}</h1>
-            <h2>Background Info:</h2>
-            <p>Album: {songData.album_name}</p>
-            <p>Artist: {songData.artist_name}</p>
-            <p>Artist ID: {artistId}</p>
-            <p>Country: {country}</p>
-            <p>Listeners: {listeners}</p>
-            <p>Current Track Id: {id}</p>
-            <p>Next Track Id: {nextTrackId}</p>
-            <p>Tag: {tag}</p>
-            {/* <p>Duration: {songData.duration / 60}</p> */}
-            </Stack>
-            <Button onClick={() => recommendation1() } style={{ left: '50%', transform: 'translateX(-50%)' }}>
-                Recommendation 1
-            </Button>
-            <p>Recommendation1: <NavLink to={`/song/${recommendation1Data.track_id}`}>{recommendation1Data.track_name}</NavLink></p>
-            
-            <Button onClick={() => recommendation2() } style={{ left: '50%', transform: 'translateX(-50%)' }}>
-                Recommendation 2
-            </Button>
-            <p>Recommendation2.1: <NavLink to={`/song/${recommendation2Data.track_id}`}>{recommendation2Data.track_id}</NavLink></p>
-            {/* <p>Recommendation2.2: <NavLink to={`/song/${recommendation2Data[1].track_id}`}>{recommendation2Data[1].track_id}</NavLink></p> */}
+  const [openWindow, setOpenWindow] = React.useState(false);
+  const handleClickOpenWindow = () => {
+    setOpenWindow(true);
+  };
+  const handleCloseWindowAndSubmit = () => {
+    checked.forEach((playlist_id) => addToPlaylist(playlist_id, id));
+    setOpenWindow(false);
+  };
+  const handleCloseWindow = () => {
+    setOpenWindow(false);
+  };
 
-        </Container>
-    );
+  useEffect(() => {
+    fetch(`http://${config.server_host}:${config.server_port}/song/${id}`)
+      .then((res) => {
+        return res.json();
+      })
+      .then((resJson) => {
+        const songReturn = resJson;
+        setSongData(songReturn);
+        setNextTrackId(songReturn.track_id);
+        setArtistId(songReturn.artist_id);
+        setTag(songReturn.tag);
+        setCountry(songReturn.country);
+        setListeners(songReturn.listeners);
+      });
+  }, [id]);
+
+  const recommendation1 = () => {
+    fetch(
+      `http://${config.server_host}:${config.server_port}/recommendation1/${artistId}/${country}/${tag}/${listeners}`
+    )
+      .then((res) => res.json())
+      .then((resJson) => setRecommendation1Data(resJson));
+  };
+
+  const recommendation2 = () => {
+    fetch(
+      `http://${config.server_host}:${config.server_port}/recommendation2/${nextTrackId}`
+    )
+      .then((res) => res.json())
+      .then((resJson) => setRecommendation2Data(resJson));
+  };
+
+  console.log(playlists);
+
+  return (
+    <>
+      <Dialog open={openWindow} onClose={handleCloseWindow}>
+        <DialogTitle>{"Add to playlist"}</DialogTitle>
+        <DialogContent>
+          <List
+            sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
+          >
+            {playlists.map((playlist) => {
+              const labelId = `checkbox-list-label-${playlist.uplaylist_id}`;
+
+              return (
+                <ListItem key={playlist.uplaylist_id} disablePadding>
+                  <ListItemButton
+                    role={undefined}
+                    onClick={handleToggle(playlist.uplaylist_id)}
+                    dense
+                  >
+                    <ListItemIcon>
+                      <Checkbox
+                        edge="start"
+                        checked={checked.indexOf(playlist.uplaylist_id) !== -1}
+                        tabIndex={-1}
+                        disableRipple
+                        inputProps={{ "aria-labelledby": labelId }}
+                      />
+                    </ListItemIcon>
+                    <ListItemText id={labelId} primary={playlist.name} />
+                  </ListItemButton>
+                </ListItem>
+              );
+            })}
+          </List>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseWindow}>Cancel</Button>
+          <Button
+            variant="contained"
+            onClick={handleCloseWindowAndSubmit}
+            autoFocus
+          >
+            Add
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Container>
+        <Stack>
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            <Typography sx={{ mt: 4 }} variant="h2">
+              {songData.track_name}
+            </Typography>
+            <Box sx={{ p: 4 }}>
+              <IconButton
+                aria-label="edit"
+                size="large"
+                onClick={handleClickOpenWindow}
+              >
+                <PlaylistAddIcon sx={{ fontSize: 58 }} />
+              </IconButton>
+            </Box>
+          </Box>
+
+          <h2>Background Info:</h2>
+          <p>Album: {songData.album_name}</p>
+          <p>Artist: {songData.artist_name}</p>
+          <p>Artist ID: {artistId}</p>
+          <p>Country: {country}</p>
+          <p>Listeners: {listeners}</p>
+          <p>Current Track Id: {id}</p>
+          <p>Next Track Id: {nextTrackId}</p>
+          <p>Tag: {tag}</p>
+          {/* <p>Duration: {songData.duration / 60}</p> */}
+        </Stack>
+        <Button
+          onClick={() => recommendation1()}
+          style={{ left: "50%", transform: "translateX(-50%)" }}
+        >
+          Recommendation 1
+        </Button>
+        <p>
+          Recommendation1:{" "}
+          <NavLink to={`/song/${recommendation1Data.track_id}`}>
+            {recommendation1Data.track_name}
+          </NavLink>
+        </p>
+
+        <Button
+          onClick={() => recommendation2()}
+          style={{ left: "50%", transform: "translateX(-50%)" }}
+        >
+          Recommendation 2
+        </Button>
+        <p>
+          Recommendation2.1:{" "}
+          <NavLink to={`/song/${recommendation2Data.track_id}`}>
+            {recommendation2Data.track_id}
+          </NavLink>
+        </p>
+        {/* <p>Recommendation2.2: <NavLink to={`/song/${recommendation2Data[1].track_id}`}>{recommendation2Data[1].track_id}</NavLink></p> */}
+      </Container>
+    </>
+  );
 }

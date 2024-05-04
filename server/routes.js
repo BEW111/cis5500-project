@@ -272,6 +272,95 @@ const getArtistInfoByCountry = async (req, res) => {
   });
 };
 
+
+const getArtistStatsByCountry = async (req, res) => {
+  const { country } = req.params;
+
+  const query = `
+      WITH CanadianArtists AS (
+          SELECT mbid, country
+          FROM Artist
+          WHERE country = ?
+      )
+      SELECT
+          COUNT(t.id) AS total_tracks,
+          COUNT(pt.trackId) AS total_playlists,
+          AVG(ptc.track_count) AS avg_tracks_per_playlist
+      FROM CanadianArtists ca
+      JOIN Track t ON ca.mbid = t.artist_id
+      JOIN PlaylistTrack pt ON t.id = pt.trackId
+      JOIN PlaylistTrackCounts ptc ON pt.pid = ptc.pid
+      GROUP BY country;
+  `;
+
+  connection.query(query, [country], (err, results) => {
+      if (err) {
+          console.error("Error executing query:", err);
+          res.status(500).json({ error: "Internal server error" });
+      } else {
+          res.json(results[0] || {});
+      }
+  });
+};
+
+
+const getTopGenresByCountry = async (req, res) => {
+  const { country } = req.params;
+  const currentYear = new Date().getFullYear();
+  const fiveYearsAgo = currentYear - 5;
+
+  const query = `
+  SELECT
+  YEAR(p.modified_at) AS year,
+  t.name AS tag_name,
+  COUNT(pt.pid) AS playlist_count,
+  SUM(a.listeners) AS total_listeners
+FROM project.Playlist p
+JOIN project.PlaylistTrack pt ON p.pid = pt.pid
+JOIN project.Track tr ON pt.trackId = tr.id
+JOIN project.ArtistTags at ON tr.artist_id = at.artist_id
+JOIN project.Tags t ON at.tag_id = t.id
+JOIN project.Artist a ON tr.artist_id = a.mbid
+WHERE a.country = 'Canada'
+GROUP BY year, t.name
+ORDER BY year DESC, total_listeners DESC
+LIMIT 5;
+  `;
+
+  connection.query(query, [country, fiveYearsAgo], (err, results) => {
+    if (err) {
+      console.error("Error fetching top genres data:", err);
+      res.status(500).json({ error: "Internal server error" });
+    } else {
+      res.json(results);
+    }
+  });
+};
+
+
+const getArtistListByCountry = async (req, res) => {
+  const { country } = req.params;  // Extract country from the route parameter
+
+  const query = `
+      SELECT country, name, listeners, scrobbles, num_playlists, num_tracks, top_tag
+      FROM ArtistCountryStats
+      WHERE country = ?
+      ORDER BY scrobbles DESC, num_playlists DESC
+      LIMIT 10;
+  `;
+
+  connection.query(query, [country], (err, results) => {
+      if (err) {
+          console.error("Error fetching artist statistics:", err);
+          res.status(500).json({ error: "Internal server error" });
+      } else {
+          res.json(results);
+      }
+  });
+};
+
+
+
 // const getArtistsByCountry = async (req, res) => {
 //   // Directly using 'Germany' in the query to avoid using parameters
 //   const query = `
@@ -567,4 +656,7 @@ module.exports = {
   getArtistsByCountry,
   getArtistInfoByCountry,
   search_songs,
+  getArtistStatsByCountry,
+  getTopGenresByCountry,
+  getArtistListByCountry,
 };

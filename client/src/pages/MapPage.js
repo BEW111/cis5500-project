@@ -8,7 +8,7 @@ import LocationMarker from '../components/LocationMarker';
 
 
 function MapPage() {
-    const [country, setCountry] = useState('');
+    const [country, setCountry] = useState(null);
     const [stats, setStats] = useState({ valid: false, total_tracks: 0, total_playlists: 0, avg_tracks_per_playlist: 0 });
     const [genres, setGenres] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -69,7 +69,7 @@ function MapPage() {
                 </MapContainer>
             </div>
             <div style={{ flex: 1, overflowY: 'auto', padding: '1rem' }}>
-            <div>
+            {/* <div>
                     <h2>Top Artists In {country}</h2>
                     <ArtistDetails country={country} />
                     <h2>Artist Statistics</h2>
@@ -86,7 +86,30 @@ function MapPage() {
             )}
                     <h2>Top Genres</h2>
                     {loading ? <p>Loading genres...</p> : genres.map(genre => <GenreCard key={genre.tag_name} genre={genre} />)}
+                </div> */}
+
+{country ? (
+                <div>
+                    <h2>Top Artists In {country}</h2>
+                    <ArtistDetails country={country} />
+                    <h2>Artist Statistics</h2>
+                    {loading ? <p>Loading artist statistics...</p> : (
+                        stats.valid ? (
+                            <div>
+                                <h3>Total Tracks: {stats.total_tracks}</h3>
+                                <h3>Total Playlists: {stats.total_playlists}</h3>
+                                <h3>Average Tracks per Playlist: {stats.avg_tracks_per_playlist.toFixed(2)}</h3>
+                            </div>
+                        ) : (
+                            <p>Data unavailable or invalid for the selected country.</p>
+                        )
+                    )}
+                    <h2>Top Genres</h2>
+                    {loading ? <p>Loading genres...</p> : genres.map(genre => <GenreCard key={genre.tag_name} genre={genre} />)}
                 </div>
+            ) : (
+                <p>Please click on a country to view artist and genre statistics.</p>
+            )}
             </div>
         </div>
     );

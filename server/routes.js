@@ -13,9 +13,6 @@ const connection = mysql.createConnection({
 });
 connection.connect((err) => err && console.log(err));
 
-/******************
- * WARM UP ROUTES *
- ******************/
 
 const getSongInfo = async function (req, res) {
   const id = req.params.id;
@@ -115,7 +112,10 @@ const recommendation1 = async function (req, res) {
   connection.query(
     `
     SELECT T.track_name AS track_name, T.id AS track_id
-    FROM Track T JOIN Artist A ON T.artist_id = A.mbid JOIN ArtistTags AT ON AT.artist_id = T.artist_id JOIN Tags ON Tags.id = AT.tag_id
+    FROM Track T 
+    JOIN Artist A ON T.artist_id = A.mbid 
+    JOIN ArtistTags AT ON AT.artist_id = T.artist_id 
+    JOIN Tags ON Tags.id = AT.tag_id
     WHERE A.name != '${artistId}'
       AND A.country = '${country}'
       OR Tags.name = '${tag}'
@@ -158,9 +158,6 @@ const recommendation2 = async function (req, res) {
         console.log(err);
         res.json({});
       } else {
-        console.log(data.length);
-        console.log(data[0]);
-        console.log(data[data.length - 1]);
         res.json(data[0]);
       }
     }
@@ -168,35 +165,43 @@ const recommendation2 = async function (req, res) {
 };
 
 
-// const recommendation2 = async function (req, res) {
-//   const trackId = req.params.trackId;
+const recommendation3 = async function (req, res) {
+  const artistId = req.params.artistId;
+  const country = req.params.country;
+  const tag = req.params.tag;
+  const listeners = req.params.listeners;
 
-//   connection.query(
-//     `
-//   WITH PIDs AS (
-//     SELECT PT.pid AS pid
-//     FROM Track T JOIN PlaylistTrack PT ON T.id = PT.trackId
-//     WHERE T.id = '${trackId}'
-//   ) 
-//     SELECT PT.trackId AS track_id, COUNT(*) AS appearances
-//     FROM PIDs JOIN PlaylistTrack PT ON PIDs.pid = PT.pid
-//     GROUP BY PT.trackId
-//     HAVING PT.trackId != '${trackId}'
-//     ORDER BY appearances
-//   `,
-//     (err, data) => {
-//       if (err || data.length === 0) {
-//         console.log(err);
-//         res.json({});
-//       } else {
-//         console.log(data.length);
-//         console.log(data[0]);
-//         console.log(data[data.length - 1]);
-//         res.json(data[0]);
-//       }
-//     }
-//   );
-// };
+  connection.query(
+    `
+    WITH tracks AS (
+      SELECT T.track_name AS track_name, T.id AS track_id
+      FROM Track T
+      JOIN Artist A ON T.artist_id = A.mbid
+      JOIN ArtistTags AT ON AT.artist_id = T.artist_id
+      JOIN Tags ON Tags.id = AT.tag_id
+      WHERE A.name = '${artistId}'
+      AND A.country = '${country}'
+      OR Tags.name = '${tag}'
+      AND A.listeners >= '${listeners * 0.5}' AND A.listeners <= '${listeners * 1.5}'
+  )
+      SELECT T.track_id AS track_id, T.track_name AS track_name, COUNT(*) AS numPlaylists, SUM(P.num_followers) AS totalFollowers
+      FROM tracks T JOIN PlaylistTrack PT ON PT.trackId = T.track_id
+      JOIN Playlist P ON PT.pid = P.pid
+      GROUP BY T.track_id, T.track_name
+      ORDER BY totalFollowers DESC, numPlaylists DESC;
+  `,
+    (err, data) => {
+      if (err || data.length === 0) {
+        console.log(err);
+        res.json({});
+      } else {
+        res.json(data[0]);
+      }
+    }
+  );
+};
+
+
 
 // Route for getting the changing popularity of music genres over time
 const getGenrePopularity = async (req, res) => {
@@ -531,6 +536,7 @@ module.exports = {
   getArtistTags,
   recommendation1,
   recommendation2,
+  recommendation3,
   getGenrePopularity,
   getPopularCollaborations,
   getArtistsByCountry,

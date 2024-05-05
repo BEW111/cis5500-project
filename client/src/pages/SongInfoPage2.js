@@ -18,6 +18,10 @@ export default function SongInfoPage() {
     const [artistName, setArtistName] = useState('N/A');
     const [recommendation1Data, setRecommendation1Data] = useState({})
     const [recommendation2Data, setRecommendation2Data] = useState({})
+<<<<<<< Updated upstream
+=======
+    const [recommendation3Data, setRecommendation3Data] = useState({})
+>>>>>>> Stashed changes
 
 
     useEffect(() => {   

@@ -52,12 +52,13 @@ const addToPlaylist = async (playlist_id, track_id) => {
 
 export default function SongInfoPage() {
   const { id } = useParams();
-  const [artistId, setArtistId] = useState("");
-  const [nextTrackId, setNextTrackId] = useState("");
-  const [country, setCountry] = useState("");
-  const [tag, setTag] = useState("");
-  const [listeners, setListeners] = useState("");
-  const [songData, setSongData] = useState({});
+  const [trackName, setTrackName] = useState("N/A");
+  const [albumName, setAlbumName] = useState("N/A");
+  const [artistId, setArtistId] = useState("N/A");
+  const [country, setCountry] = useState("N/A");
+  const [tag, setTag] = useState("N/A");
+  const [listeners, setListeners] = useState("N/A");
+  const [artistName, setArtistName] = useState("N/A");
   const [recommendation1Data, setRecommendation1Data] = useState({});
   const [recommendation2Data, setRecommendation2Data] = useState({});
 
@@ -105,20 +106,41 @@ export default function SongInfoPage() {
   };
 
   useEffect(() => {
-    fetch(`http://${config.server_host}:${config.server_port}/song/${id}`)
-      .then((res) => {
-        return res.json();
-      })
+    fetch(
+      `http://${config.server_host}:${config.server_port}/getSongInfo/${id}`
+    )
+      .then((res) => res.json())
       .then((resJson) => {
         const songReturn = resJson;
-        setSongData(songReturn);
-        setNextTrackId(songReturn.track_id);
+        setTrackName(songReturn.track_name);
+        setAlbumName(songReturn.album_name);
         setArtistId(songReturn.artist_id);
-        setTag(songReturn.tag);
+      });
+  }, [id]);
+
+  useEffect(() => {
+    fetch(
+      `http://${config.server_host}:${config.server_port}/getArtistInfo/${artistId}`
+    )
+      .then((res) => res.json())
+      .then((resJson) => {
+        const songReturn = resJson;
+        setArtistName(songReturn.artist_name);
         setCountry(songReturn.country);
         setListeners(songReturn.listeners);
       });
-  }, [id]);
+  }, [artistId]);
+
+  useEffect(() => {
+    fetch(
+      `http://${config.server_host}:${config.server_port}/getArtistTags/${artistId}`
+    )
+      .then((res) => res.json())
+      .then((resJson) => {
+        const songReturn = resJson;
+        setTag(songReturn.tag);
+      });
+  }, [artistName]);
 
   const recommendation1 = () => {
     fetch(
@@ -130,12 +152,11 @@ export default function SongInfoPage() {
 
   const recommendation2 = () => {
     fetch(
-      `http://${config.server_host}:${config.server_port}/recommendation2/${nextTrackId}`
+      `http://${config.server_host}:${config.server_port}/recommendation2/${id}`
     )
       .then((res) => res.json())
       .then((resJson) => setRecommendation2Data(resJson));
   };
-
   console.log(playlists);
 
   return (
@@ -146,30 +167,33 @@ export default function SongInfoPage() {
           <List
             sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
           >
-            {playlists.map((playlist) => {
-              const labelId = `checkbox-list-label-${playlist.uplaylist_id}`;
+            {playlists &&
+              playlists.map((playlist) => {
+                const labelId = `checkbox-list-label-${playlist.uplaylist_id}`;
 
-              return (
-                <ListItem key={playlist.uplaylist_id} disablePadding>
-                  <ListItemButton
-                    role={undefined}
-                    onClick={handleToggle(playlist.uplaylist_id)}
-                    dense
-                  >
-                    <ListItemIcon>
-                      <Checkbox
-                        edge="start"
-                        checked={checked.indexOf(playlist.uplaylist_id) !== -1}
-                        tabIndex={-1}
-                        disableRipple
-                        inputProps={{ "aria-labelledby": labelId }}
-                      />
-                    </ListItemIcon>
-                    <ListItemText id={labelId} primary={playlist.name} />
-                  </ListItemButton>
-                </ListItem>
-              );
-            })}
+                return (
+                  <ListItem key={playlist.uplaylist_id} disablePadding>
+                    <ListItemButton
+                      role={undefined}
+                      onClick={handleToggle(playlist.uplaylist_id)}
+                      dense
+                    >
+                      <ListItemIcon>
+                        <Checkbox
+                          edge="start"
+                          checked={
+                            checked.indexOf(playlist.uplaylist_id) !== -1
+                          }
+                          tabIndex={-1}
+                          disableRipple
+                          inputProps={{ "aria-labelledby": labelId }}
+                        />
+                      </ListItemIcon>
+                      <ListItemText id={labelId} primary={playlist.name} />
+                    </ListItemButton>
+                  </ListItem>
+                );
+              })}
           </List>
         </DialogContent>
         <DialogActions>
@@ -187,7 +211,7 @@ export default function SongInfoPage() {
         <Stack>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             <Typography sx={{ mt: 4 }} variant="h2">
-              {songData.track_name}
+              {trackName}
             </Typography>
             <Box sx={{ p: 4 }}>
               <IconButton
@@ -201,13 +225,10 @@ export default function SongInfoPage() {
           </Box>
 
           <h2>Background Info:</h2>
-          <p>Album: {songData.album_name}</p>
-          <p>Artist: {songData.artist_name}</p>
-          <p>Artist ID: {artistId}</p>
+          <p>Album: {albumName}</p>
+          <p>Artist: {artistName}</p>
           <p>Country: {country}</p>
           <p>Listeners: {listeners}</p>
-          <p>Current Track Id: {id}</p>
-          <p>Next Track Id: {nextTrackId}</p>
           <p>Tag: {tag}</p>
           {/* <p>Duration: {songData.duration / 60}</p> */}
         </Stack>
@@ -231,9 +252,9 @@ export default function SongInfoPage() {
           Recommendation 2
         </Button>
         <p>
-          Recommendation2.1:{" "}
+          Recommendation 2:{" "}
           <NavLink to={`/song/${recommendation2Data.track_id}`}>
-            {recommendation2Data.track_id}
+            {recommendation2Data.track_name}
           </NavLink>
         </p>
         {/* <p>Recommendation2.2: <NavLink to={`/song/${recommendation2Data[1].track_id}`}>{recommendation2Data[1].track_id}</NavLink></p> */}

@@ -18,6 +18,7 @@ export default function SongInfoPage() {
     const [artistName, setArtistName] = useState('N/A');
     const [recommendation1Data, setRecommendation1Data] = useState({})
     const [recommendation2Data, setRecommendation2Data] = useState({})
+    const [recommendation3Data, setRecommendation3Data] = useState({})
 
 
     useEffect(() => {   
@@ -71,6 +72,12 @@ export default function SongInfoPage() {
           .then(resJson => setRecommendation2Data(resJson));
     }
 
+    const recommendation3 = () => {
+        fetch(`http://${config.server_host}:${config.server_port}/recommendation3/${artistId}/${country}/${tag}/${listeners}`)
+          .then(res => res.json())
+          .then(resJson => setRecommendation3Data(resJson));
+    }
+
     return (
         <Container>
             <Stack>
@@ -91,8 +98,11 @@ export default function SongInfoPage() {
                 Recommendation 2
             </Button>
             <p>Recommendation 2: <NavLink to={`/song/${recommendation2Data.track_id}`}>{recommendation2Data.track_name}</NavLink></p>
-            {/* <p>Recommendation2.2: <NavLink to={`/song/${recommendation2Data[1].track_id}`}>{recommendation2Data[1].track_id}</NavLink></p> */}
 
+            <Button onClick={() => recommendation3() } style={{ left: '50%', transform: 'translateX(-50%)' }}>
+                Recommendation 3
+            </Button>
+            <p>Recommendation 3: <NavLink to={`/song/${recommendation3Data.track_id}`}>{recommendation3Data.track_name}</NavLink></p>
         </Container>
     );
 }

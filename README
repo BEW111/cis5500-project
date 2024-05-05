@@ -1,0 +1,38 @@
+CIS5500 Project
+This project is a web application named AmpMap. It allows users to explore the world of music through an interactive map. The project is divided into two main parts: the client and the server. The client is a React application and the server is a Node.js application.
+
+Running the App Locally
+To run the app locally, you need to start both the client and the server.
+Starting the Client
+Navigate to the client directory and run the following command:
+start
+This will start the client on localhost:3000.
+
+Starting the Server
+Navigate to the server directory and run the following command:
+start
+This will start the server on localhost:8080.
+
+Code Organization
+The codebase is divided into two main directories: client and server.
+client: Contains the React application. The main entry point is src/index.js. The src/pages directory contains the different pages of the application, and the src/components directory contains the reusable components.
+server: Contains the Node.js server. The main entry point is server.js. The routes directory contains the different routes of the server.
+
+Dependencies
+The project has several dependencies, which are listed in the package.json files of the client and the server.
+
+Client Dependencies
+The client dependencies are listed in client/package.json from line 5 to line 26. Some of the main dependencies include:
+react and react-dom for building the user interface
+axios for making HTTP requests
+leaflet and react-leaflet for the interactive map
+@mui/material for Material-UI components
+
+Server Dependencies
+The server dependencies are listed in server/package.json from line 10 to line 23. Some of the main dependencies include:
+express for the server
+mysql for interacting with the MySQL database
+passport and related packages for authentication
+cors for handling CORS
+dotenv for environment variables
+Please make sure to install these dependencies before running the app.

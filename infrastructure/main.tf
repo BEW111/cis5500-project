@@ -72,7 +72,7 @@ resource "aws_ecs_task_definition" "app" {
       ],
       environment = [
         { "name" : "RDS_HOST", "value" : var.RDS_HOST },
-        { "name" : "RDS_PASSWORD", "value" : var.RDS_HOST },
+        { "name" : "RDS_PASSWORD", "value" : var.RDS_PASSWORD },
         { "name" : "GOOGLE_CLIENT_ID", "value" : var.GOOGLE_CLIENT_ID },
         { "name" : "GOOGLE_CLIENT_SECRET", "value" : var.GOOGLE_CLIENT_SECRET },
         { "name" : "SPOTIFY_CLIENT_ID", "value" : var.SPOTIFY_CLIENT_ID },

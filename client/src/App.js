@@ -64,8 +64,6 @@ export default function App() {
           <NavBar />
           <Routes>
             <Route path="/" element={<MapPage />} />
-            {/* <Route path="/albums" element={<AlbumsPage />} /> */}
-            <Route path="/albums/:album_id" element={<AlbumInfoPage />} />
             <Route
               path="/songs"
               element={user ? <SongsPage /> : <Navigate to="/login" replace />}

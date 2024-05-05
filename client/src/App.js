@@ -11,8 +11,8 @@ import AlbumsPage from "./pages/AlbumsPage";
 import SongsPage from "./pages/SongsPage.tsx";
 import AlbumInfoPage from "./pages/AlbumInfoPage";
 import LoginPage from "./pages/LoginPage";
-
-import SongInfoPage from "./pages/SongInfoPage";
+import SongInfoPage from "./pages/SongInfoPage2";
+// import SongInfoPage from "./pages/SongInfoPage";
 import MapPage from "./pages/MapPage";
 import UserProfilePage from "./pages/UserProfilePage.tsx";
 

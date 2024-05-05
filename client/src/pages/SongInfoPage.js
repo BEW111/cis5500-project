@@ -28,7 +28,6 @@ const config = require("../config.json");
 
 const addToPlaylist = async (playlist_id, track_id) => {
   const postData = { playlist_id: playlist_id, track_id: track_id };
-
   fetch("http://localhost:8080/user/playlists/song", {
     method: "POST",
     headers: {

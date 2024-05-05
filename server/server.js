@@ -47,7 +47,10 @@ app.get("/artists/list/:country", routes.getArtistListByCountry);
 // app.get('/artists/Germany', routes.getArtistsByCountry);
 
 app.get("/search", routes.search_songs);
-app.get("/song/:id", routes.song);
+// app.get("/song/:id/:artistId", routes.song);
+app.get("/getSongInfo/:id", routes.getSongInfo);
+app.get("/getArtistInfo/:artistId", routes.getArtistInfo);
+app.get("/getArtistTags/:artistId", routes.getArtistTags);
 app.get(
   "/recommendation1/:artistId/:country/:tag/:listeners",
   routes.recommendation1

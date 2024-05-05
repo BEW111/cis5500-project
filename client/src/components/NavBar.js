@@ -47,9 +47,9 @@ export default function NavBar() {
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <NavText href="/" text="AMPMAP" isMain />
-          <NavText href="/albums" text="ALBUMS" />
           <NavText href="/songs" text="SONGS" />
           <NavText href="map" text="MAP" />
+          <NavText href="/login" text={user ? "LOGOUT" : "LOGIN"} />
           <Box
             sx={{
               flexGrow: 1,
@@ -57,7 +57,7 @@ export default function NavBar() {
               justifyContent: "flex-end",
             }}
           >
-            {user ? (
+            {user && (
               <NavLink
                 to="/profile"
                 style={{
@@ -74,8 +74,6 @@ export default function NavBar() {
                   </Typography>
                 </Avatar>
               </NavLink>
-            ) : (
-              <NavText href="/login" text={user ? "LOGOUT" : "LOGIN"} />
             )}
           </Box>
         </Toolbar>

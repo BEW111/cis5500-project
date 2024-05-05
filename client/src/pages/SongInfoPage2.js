@@ -86,12 +86,12 @@ export default function SongInfoPage() {
             <Button onClick={() => recommendation1() } style={{ left: '50%', transform: 'translateX(-50%)' }}>
                 Recommendation 1
             </Button>
-            <p>Recommendation1: <NavLink to={`/song/${recommendation1Data.track_id}`}>{recommendation1Data.track_name}</NavLink></p>
+            <p>Recommendation 1: <NavLink to={`/song/${recommendation1Data.track_id}`}>{recommendation1Data.track_name}</NavLink></p>
             
             <Button onClick={() => recommendation2() } style={{ left: '50%', transform: 'translateX(-50%)' }}>
                 Recommendation 2
             </Button>
-            <p>Recommendation2.1: <NavLink to={`/song/${recommendation2Data.track_id}`}>{recommendation2Data.track_name}</NavLink></p>
+            <p>Recommendation 2: <NavLink to={`/song/${recommendation2Data.track_id}`}>{recommendation2Data.track_name}</NavLink></p>
             {/* <p>Recommendation2.2: <NavLink to={`/song/${recommendation2Data[1].track_id}`}>{recommendation2Data[1].track_id}</NavLink></p> */}
 
         </Container>

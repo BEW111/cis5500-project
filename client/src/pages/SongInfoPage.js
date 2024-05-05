@@ -246,6 +246,8 @@ export default function SongInfoPage() {
           <p>Tag: {tag}</p>
           {/* <p>Duration: {songData.duration / 60}</p> */}
         </Stack>
+        {artistName !== "N/A" && (
+          <>
         <Button
           onClick={() => recommendation1()}
           style={{ left: "50%", transform: "translateX(-50%)" }}
@@ -284,7 +286,8 @@ export default function SongInfoPage() {
             {recommendation3Data.track_name}
           </NavLink>
         </p>
-
+        </>
+        )}
       </Container>
     </>
   );

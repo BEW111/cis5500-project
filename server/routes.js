@@ -400,7 +400,7 @@ JOIN project.Track tr ON pt.trackId = tr.id
 JOIN project.ArtistTags at ON tr.artist_id = at.artist_id
 JOIN project.Tags t ON at.tag_id = t.id
 JOIN project.Artist a ON tr.artist_id = a.mbid
-WHERE a.country = 'Canada'
+WHERE a.country = ?
 GROUP BY year, t.name
 ORDER BY year DESC, total_listeners DESC
 LIMIT 5;

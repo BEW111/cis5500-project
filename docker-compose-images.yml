@@ -1,0 +1,10 @@
+services:
+  frontend:
+    image: ghcr.io/bew111/cis5500-project/frontend:latest
+    ports:
+      - "3000:3000"
+  backend:
+    image: ghcr.io/bew111/cis5500-project/backend:latest
+    ports:
+      - "8080:8080"
+    env_file: ./server/.env

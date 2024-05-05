@@ -30,9 +30,9 @@ const getSongInfo = async function (req, res) {
       if (err || data.length === 0) {
         console.log(err);
         res.json({
-          "track_name": "N/A",
-          "album_name": "N/A",
-          "artist_id": "N/A"
+          track_name: "N/A",
+          album_name: "N/A",
+          artist_id: "N/A",
         });
       } else {
         res.json(data[0]);
@@ -40,7 +40,6 @@ const getSongInfo = async function (req, res) {
     }
   );
 };
-
 
 const getArtistInfo = async function (req, res) {
   const artist_id = req.params.artistId;
@@ -119,7 +118,9 @@ const recommendation1 = async function (req, res) {
     WHERE A.name != '${artistId}'
       AND A.country = '${country}'
       OR Tags.name = '${tag}'
-      AND A.listeners >= '${listeners * 0.5}' AND A.listeners <= '${listeners * 1.5}'
+      AND A.listeners >= '${listeners * 0.5}' AND A.listeners <= '${
+      listeners * 1.5
+    }'
     ORDER BY RAND();
   `,
     (err, data) => {
@@ -167,7 +168,6 @@ const recommendation2 = async function (req, res) {
   );
 };
 
-
 // const recommendation2 = async function (req, res) {
 //   const trackId = req.params.trackId;
 
@@ -177,7 +177,7 @@ const recommendation2 = async function (req, res) {
 //     SELECT PT.pid AS pid
 //     FROM Track T JOIN PlaylistTrack PT ON T.id = PT.trackId
 //     WHERE T.id = '${trackId}'
-//   ) 
+//   )
 //     SELECT PT.trackId AS track_id, COUNT(*) AS appearances
 //     FROM PIDs JOIN PlaylistTrack PT ON PIDs.pid = PT.pid
 //     GROUP BY PT.trackId
@@ -395,20 +395,21 @@ const getArtistListByCountry = async (req, res) => {
   });
 };
 
-
 const search_songs = async (req, res) => {
   const limit = req.query.limit ?? 10;
   const offset = req.query.offset ?? 0;
 
   const query = `
-  select id, track_name
-  from Track
-  where track_name like '%${req.query.q}%'
-  limit ${limit}
-  offset ${offset}
+    SELECT id, track_name
+    FROM Track
+    WHERE track_name LIKE ?
+    LIMIT ?
+    OFFSET ?
   `;
 
-  connection.query(query, (err, results) => {
+  const queryParams = [`%${req.query.q}%`, limit, offset];
+
+  connection.query(query, queryParams, (err, results) => {
     if (err) {
       console.error("Error fetching popular collaborations data:", err);
       res.status(500).json({ error: "Internal server error" });

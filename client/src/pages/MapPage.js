@@ -69,25 +69,6 @@ function MapPage() {
                 </MapContainer>
             </div>
             <div style={{ flex: 1, overflowY: 'auto', padding: '1rem' }}>
-            {/* <div>
-                    <h2>Top Artists In {country}</h2>
-                    <ArtistDetails country={country} />
-                    <h2>Artist Statistics</h2>
-                    {loading ? <p>Loading artist statistics...</p> : (
-                stats.valid ? (
-                    <div>
-                        <h3>Total Tracks: {stats.total_tracks}</h3>
-                        <h3>Total Playlists: {stats.total_playlists}</h3>
-                        <h3>Average Tracks per Playlist: {stats.avg_tracks_per_playlist.toFixed(2)}</h3>
-                    </div>
-                ) : (
-                    <p>Data unavailable or invalid for the selected country.</p>
-                )
-            )}
-                    <h2>Top Genres</h2>
-                    {loading ? <p>Loading genres...</p> : genres.map(genre => <GenreCard key={genre.tag_name} genre={genre} />)}
-                </div> */}
-
 {country ? (
                 <div>
                     <h2>Top Artists In {country}</h2>

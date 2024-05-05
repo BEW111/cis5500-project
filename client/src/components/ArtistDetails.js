@@ -22,34 +22,19 @@ function ArtistDetails({ country }) {
                 setArtists(data);
             } catch (error) {
                 console.error('Failed to fetch artist details:', error);
-                setArtists([]);  // Reset the artists on error
+                setArtists([]); 
             } finally {
-                setLoading(false);  // Set loading to false after fetching
+                setLoading(false);
             }
         };
 
         fetchArtistDetails();
-    }, [country]);  // Fetch new details when country changes
+    }, [country]); 
 
     return (
-        // <div>
-        //     {artists.length > 0 ? (
-        //         artists.map(artist => (
-        //             <div key={artist.mbid} style={{ padding: '10px', borderBottom: '1px solid #ccc' }}>
-        //                 <h3>{artist.name}</h3>
-        //                 <p>Listeners: {artist.listeners}</p>
-        //                 <p>Scrobbles: {artist.scrobbles}</p>
-        //                 <p>Playlists Featured In: {artist.num_playlists}</p>
-        //                 <p>Tag: {artist.top_tag}</p>
-        //             </div>
-        //         ))
-        //     ) : (
-        //         <p>No artists found for {country}</p>
-        //     )}
-        // </div>
         <div>
             {loading ? (
-                <p>Loading artist details...</p>  // Display loading message
+                <p>Loading artist details...</p> 
             ) : artists.length > 0 ? (
                 artists.map(artist => (
                     <div key={artist.mbid} style={{ padding: '10px', borderBottom: '1px solid #ccc' }}>

@@ -81,7 +81,6 @@ export default function SongInfoPage() {
             <p>Country: {country}</p>
             <p>Listeners: {listeners}</p>
             <p>Tag: {tag}</p>
-            <p>Artist Id: {artistId}</p>
             </Stack>
             <Button onClick={() => recommendation1() } style={{ left: '50%', transform: 'translateX(-50%)' }}>
                 Recommendation 1

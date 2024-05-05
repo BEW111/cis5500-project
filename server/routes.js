@@ -115,11 +115,8 @@ const recommendation1 = async function (req, res) {
     JOIN ArtistTags AT ON AT.artist_id = T.artist_id 
     JOIN Tags ON Tags.id = AT.tag_id
     WHERE A.name != '${artistId}'
-      AND A.country = '${country}'
-      OR Tags.name = '${tag}'
-      AND A.listeners >= '${listeners * 0.5}' AND A.listeners <= '${
-      listeners * 1.5
-    }'
+      AND (A.country = '${country}' OR Tags.name = '${tag}')
+      AND A.listeners >= '${listeners * 0.5}' AND A.listeners <= '${listeners * 1.5}'
     ORDER BY RAND();
   `,
     (err, data) => {
@@ -170,6 +167,8 @@ const recommendation3 = async function (req, res) {
   const country = req.params.country;
   const tag = req.params.tag;
   const listeners = req.params.listeners;
+  const iters = req.params.iters;
+  const trackId = req.params.trackId;
 
   connection.query(
     `
@@ -180,23 +179,22 @@ const recommendation3 = async function (req, res) {
       JOIN ArtistTags AT ON AT.artist_id = T.artist_id
       JOIN Tags ON Tags.id = AT.tag_id
       WHERE A.mbid = '${artistId}'
-      AND A.country = '${country}'
-      AND A.listeners >= '${listeners * 0.5}' AND A.listeners <= '${
-      listeners * 1.5
-    }'
+      AND (A.country = '${country}' OR Tags.name = '${tag}')
+      AND A.listeners >= '${listeners * 0.5}' AND A.listeners <= '${listeners * 1.5}'
+      AND T.id != '${trackId}'
   )
       SELECT T.track_id AS track_id, T.track_name AS track_name, COUNT(*) AS numPlaylists, SUM(P.num_followers) AS totalFollowers
       FROM tracks T JOIN PlaylistTrack PT ON PT.trackId = T.track_id
       JOIN Playlist P ON PT.pid = P.pid
       GROUP BY T.track_id, T.track_name
-      ORDER BY RAND();
+      ORDER BY totalFollowers DESC, numPlaylists DESC;
   `,
     (err, data) => {
       if (err || data.length === 0) {
         console.log(err);
         res.json({});
       } else {
-        res.json(data[0]);
+        res.json(data[iters]);
       }
     }
   );

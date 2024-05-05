@@ -62,6 +62,7 @@ export default function SongInfoPage() {
   const [recommendation1Data, setRecommendation1Data] = useState({});
   const [recommendation2Data, setRecommendation2Data] = useState({});
   const [recommendation3Data, setRecommendation3Data] = useState({});
+  const [rec3Iterations, setRec3Iterations] = useState(0);
 
   const { user } = useContext(UserContext);
   const [playlists, setPlaylists] = useState();
@@ -161,10 +162,13 @@ export default function SongInfoPage() {
 
   const recommendation3 = () => {
     fetch(
-      `http://${config.server_host}:${config.server_port}/recommendation3/${artistId}/${country}/${tag}/${listeners}`
+      `http://${config.server_host}:${config.server_port}/recommendation3/${artistId}/${country}/${tag}/${listeners}/${rec3Iterations}/${id}`
     )
       .then((res) => res.json())
-      .then((resJson) => setRecommendation3Data(resJson));
+      .then((resJson) => {
+        setRec3Iterations(rec3Iterations + 1);
+        setRecommendation3Data(resJson);
+      } );
   };
 
   console.log(playlists);

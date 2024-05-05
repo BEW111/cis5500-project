@@ -15,7 +15,6 @@ function LocationMarker({ setCountry }) {
 
 async function fetchCountryFromCoords(lat, lng) {
     try {
-        // OpenCageData is the goat
         const apiKey = 'd2c5d30ab85445bfb0d4aee4ae418526'; 
         const url = `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lng}&key=${apiKey}`;
 
@@ -26,7 +25,7 @@ async function fetchCountryFromCoords(lat, lng) {
         return data.results[0].components.country;  
     } catch (error) {
         console.error('Error fetching country:', error);
-        return '';  // Return an empty string or handle the error as needed
+        return ''; 
     }
 }
 

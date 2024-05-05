@@ -22,6 +22,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import EditIcon from "@mui/icons-material/Edit";
+import { NavLink } from 'react-router-dom';
 
 interface Playlist {
   uplaylist_id: number;
@@ -169,7 +170,8 @@ const PlaylistCard = ({ playlist }: { playlist: Playlist }) => {
           {tracks.map((track) => (
             <ListItem disablePadding>
               <ListItemButton>
-                <ListItemText primary={track.track_name} />
+                {/* <ListItemText primary={track.track_name} /> */}
+                <NavLink to={`/song/${track.track_id}`}>{track.track_name}</NavLink>
               </ListItemButton>
             </ListItem>
           ))}

@@ -11,7 +11,7 @@ var bodyParser = require("body-parser");
 const app = express();
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "*",
     credentials: true,
   })
 );
@@ -51,9 +51,15 @@ app.get("/search", routes.search_songs);
 app.get("/getSongInfo/:id", routes.getSongInfo);
 app.get("/getArtistInfo/:artistId", routes.getArtistInfo);
 app.get("/getArtistTags/:artistId", routes.getArtistTags);
-app.get("/recommendation1/:artistId/:country/:tag/:listeners", routes.recommendation1);
+app.get(
+  "/recommendation1/:artistId/:country/:tag/:listeners",
+  routes.recommendation1
+);
 app.get("/recommendation2/:trackId", routes.recommendation2);
-app.get("/recommendation3/:artistId/:country/:tag/:listeners/:iters/:trackId", routes.recommendation3);
+app.get(
+  "/recommendation3/:artistId/:country/:tag/:listeners/:iters/:trackId",
+  routes.recommendation3
+);
 app.get("/user/playlists", routes.getUserPlaylists);
 app.get("/user/playlists/:playlist_id", routes.getUserPlaylistTracks);
 app.post("/user/playlists/create", routes.createUserPlaylist);

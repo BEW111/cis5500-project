@@ -26,9 +26,13 @@ import { UserContext } from "../App";
 
 const config = require("../config.json");
 
+const BACKENDURL = process.env.BACKEND_URL
+  ? process.env.BACKEND_URL
+  : "http://localhost:8080";
+
 const addToPlaylist = async (playlist_id, track_id) => {
   const postData = { playlist_id: playlist_id, track_id: track_id };
-  fetch("http://localhost:8080/user/playlists/song", {
+  fetch(`${BACKENDURL}/user/playlists/song`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -70,7 +74,7 @@ export default function SongInfoPage() {
   const updatePlaylists = async () => {
     if (user != null) {
       const res = await fetch(
-        `http://localhost:8080/user/playlists?user_id=${user.id}`
+        `${BACKENDURL}/user/playlists?user_id=${user.id}`
       );
       const data = await res.json();
       console.log(data);
@@ -168,7 +172,7 @@ export default function SongInfoPage() {
       .then((resJson) => {
         setRec3Iterations(rec3Iterations + 1);
         setRecommendation3Data(resJson);
-      } );
+      });
   };
 
   console.log(playlists);
@@ -248,45 +252,45 @@ export default function SongInfoPage() {
         </Stack>
         {artistName !== "N/A" && (
           <>
-        <Button
-          onClick={() => recommendation1()}
-          style={{ left: "50%", transform: "translateX(-50%)" }}
-        >
-          Recommendation 1
-        </Button>
-        <p>
-          Recommendation1:{" "}
-          <NavLink to={`/song/${recommendation1Data.track_id}`}>
-            {recommendation1Data.track_name}
-          </NavLink>
-        </p>
+            <Button
+              onClick={() => recommendation1()}
+              style={{ left: "50%", transform: "translateX(-50%)" }}
+            >
+              Recommendation 1
+            </Button>
+            <p>
+              Recommendation1:{" "}
+              <NavLink to={`/song/${recommendation1Data.track_id}`}>
+                {recommendation1Data.track_name}
+              </NavLink>
+            </p>
 
-        <Button
-          onClick={() => recommendation2()}
-          style={{ left: "50%", transform: "translateX(-50%)" }}
-        >
-          Recommendation 2
-        </Button>
-        <p>
-          Recommendation2:{" "}
-          <NavLink to={`/song/${recommendation2Data.track_id}`}>
-            {recommendation2Data.track_name}
-          </NavLink>
-        </p>
+            <Button
+              onClick={() => recommendation2()}
+              style={{ left: "50%", transform: "translateX(-50%)" }}
+            >
+              Recommendation 2
+            </Button>
+            <p>
+              Recommendation2:{" "}
+              <NavLink to={`/song/${recommendation2Data.track_id}`}>
+                {recommendation2Data.track_name}
+              </NavLink>
+            </p>
 
-        <Button
-          onClick={() => recommendation3()}
-          style={{ left: "50%", transform: "translateX(-50%)" }}
-        >
-          Recommendation 3
-        </Button>
-        <p>
-          Recommendation3:{" "}
-          <NavLink to={`/song/${recommendation3Data.track_id}`}>
-            {recommendation3Data.track_name}
-          </NavLink>
-        </p>
-        </>
+            <Button
+              onClick={() => recommendation3()}
+              style={{ left: "50%", transform: "translateX(-50%)" }}
+            >
+              Recommendation 3
+            </Button>
+            <p>
+              Recommendation3:{" "}
+              <NavLink to={`/song/${recommendation3Data.track_id}`}>
+                {recommendation3Data.track_name}
+              </NavLink>
+            </p>
+          </>
         )}
       </Container>
     </>

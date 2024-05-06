@@ -22,7 +22,11 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import EditIcon from "@mui/icons-material/Edit";
-import { NavLink } from 'react-router-dom';
+import { NavLink } from "react-router-dom";
+
+const BACKENDURL = process.env.BACKEND_URL
+  ? process.env.BACKEND_URL
+  : "http://localhost:8080";
 
 interface Playlist {
   uplaylist_id: number;
@@ -40,7 +44,7 @@ interface Track {
 const createPlaylist = (uid: number, onSuccess: () => void) => {
   const postData = { user_id: uid };
 
-  fetch("http://localhost:8080/user/playlists/create", {
+  fetch(`${BACKENDURL}/user/playlists/create`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -63,9 +67,7 @@ const createPlaylist = (uid: number, onSuccess: () => void) => {
 };
 
 const getPlaylistTracks = async (playlist_id: number) => {
-  const res = await fetch(
-    `http://localhost:8080/user/playlists/${playlist_id}`
-  );
+  const res = await fetch(`${BACKENDURL}/user/playlists/${playlist_id}`);
   const data = await res.json();
   return data;
 };
@@ -73,7 +75,7 @@ const getPlaylistTracks = async (playlist_id: number) => {
 const renamePlaylist = async (playlist_id: number, new_name: string) => {
   const postData = { playlist_id: playlist_id, name: new_name };
 
-  fetch("http://localhost:8080/user/playlists/rename", {
+  fetch(`${BACKENDURL}/user/playlists/rename`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -171,7 +173,9 @@ const PlaylistCard = ({ playlist }: { playlist: Playlist }) => {
             <ListItem disablePadding>
               <ListItemButton>
                 {/* <ListItemText primary={track.track_name} /> */}
-                <NavLink to={`/song/${track.track_id}`}>{track.track_name}</NavLink>
+                <NavLink to={`/song/${track.track_id}`}>
+                  {track.track_name}
+                </NavLink>
               </ListItemButton>
             </ListItem>
           ))}
@@ -188,9 +192,7 @@ export default function UserProfilePage() {
   const [refreshing, setRefreshing] = useState(true);
 
   const getPlaylists = useCallback(async () => {
-    const res = await fetch(
-      `http://localhost:8080/user/playlists?user_id=${user.id}`
-    );
+    const res = await fetch(`${BACKENDURL}/user/playlists?user_id=${user.id}`);
     const data = await res.json();
     setPlaylists(data);
   }, [user.id]);

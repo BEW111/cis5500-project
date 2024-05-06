@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { Box, Button, Card, Container, Link } from "@mui/material";
 import { Typography } from "@mui/material";
-import { NavLink } from 'react-router-dom';
+import { NavLink } from "react-router-dom";
 
 import React from "react";
 import TextField from "@mui/material/TextField";
@@ -13,6 +13,10 @@ interface SongResult {
   id: string;
   track_name: string;
 }
+
+const BACKENDURL = process.env.BACKEND_URL
+  ? process.env.BACKEND_URL
+  : "http://localhost:8080";
 
 export default function SongsPage() {
   // For autocomplete
@@ -26,7 +30,7 @@ export default function SongsPage() {
   const getAutocompleteResults = useMemo(
     () =>
       debounce((input, callback) => {
-        fetch(`http://localhost:8080/search?q=${input}`)
+        fetch(`${BACKENDURL}/search?q=${input}`)
           .then((response) => response.json())
           .then((data) => {
             callback(data);
@@ -37,7 +41,7 @@ export default function SongsPage() {
   );
 
   const updateSearchResults = () => {
-    fetch(`http://localhost:8080/search?q=${inputValue}`)
+    fetch(`${BACKENDURL}/search?q=${inputValue}`)
       .then((response) => response.json())
       .then((data) => {
         setResults(data);

@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 node:19.6.0
+FROM --platform=linux/amd64 node:20.0.0
 
 WORKDIR /
 

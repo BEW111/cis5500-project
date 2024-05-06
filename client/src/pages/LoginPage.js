@@ -9,8 +9,9 @@ import {
 import React, { useState, useContext, useEffect } from "react";
 import { UserContext } from "../App";
 
-const BACKENDURL = process.env.BACKEND_URL
-  ? process.env.BACKEND_URL
+const config = require("../config.json");
+const BACKENDURL = config.BACKEND_URL
+  ? config.BACKEND_URL
   : "http://localhost:8080";
 
 export default function LoginPage() {

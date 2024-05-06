@@ -24,8 +24,9 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { UserContext } from "../App";
 
-const BACKENDURL = process.env.BACKEND_URL
-  ? process.env.BACKEND_URL
+const config = require("../config.json");
+const BACKENDURL = config.BACKEND_URL
+  ? config.BACKEND_URL
   : "http://localhost:8080";
 
 const addToPlaylist = async (playlist_id, track_id) => {

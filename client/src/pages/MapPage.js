@@ -11,8 +11,9 @@ import ArtistDetails from "../components/ArtistDetails";
 import GenreCard from "../components/GenreCard";
 import LocationMarker from "../components/LocationMarker";
 
-const BACKENDURL = process.env.BACKEND_URL
-  ? process.env.BACKEND_URL
+const config = require("../config.json");
+const BACKENDURL = config.BACKEND_URL
+  ? config.BACKEND_URL
   : "http://localhost:8080";
 
 function MapPage() {
@@ -24,6 +25,8 @@ function MapPage() {
   });
   const [genres, setGenres] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  console.log(`BACKENDURL: ${BACKENDURL}`);
 
   useEffect(() => {
     if (country) {

@@ -4,6 +4,8 @@ const dotenv = require("dotenv").config();
 
 // Creates MySQL connection using database credential provided in config.json
 // Do not edit. If the connection fails, make sure to check that config.json is filled out correctly
+console.log(process);
+console.log(process.env);
 const connection = mysql.createConnection({
   host: process.env.RDS_HOST,
   user: config.rds_user,

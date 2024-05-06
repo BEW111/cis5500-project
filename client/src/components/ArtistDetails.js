@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 
-const BACKENDURL = process.env.BACKEND_URL
-  ? process.env.BACKEND_URL
+const config = require("../config.json");
+const BACKENDURL = config.BACKEND_URL
+  ? config.BACKEND_URL
   : "http://localhost:8080";
 
 function ArtistDetails({ country }) {

@@ -22,7 +22,7 @@ const connection = mysql.createConnection({
 });
 connection.connect((err) => err && console.log(err));
 
-const FRONTENDURL = process.env.BACFRONTENDURLKEND_URL
+const FRONTENDURL = process.env.FRONTENDURL
   ? process.env.FRONTENDURL
   : "http://localhost:3000";
 

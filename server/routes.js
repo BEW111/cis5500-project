@@ -116,7 +116,9 @@ const recommendation1 = async function (req, res) {
     JOIN Tags ON Tags.id = AT.tag_id
     WHERE A.name != '${artistId}'
       AND (A.country = '${country}' OR Tags.name = '${tag}')
-      AND A.listeners >= '${listeners * 0.5}' AND A.listeners <= '${listeners * 1.5}'
+      AND A.listeners >= '${listeners * 0.5}' AND A.listeners <= '${
+      listeners * 1.5
+    }'
     ORDER BY RAND();
   `,
     (err, data) => {
@@ -161,7 +163,6 @@ const recommendation2 = async function (req, res) {
   );
 };
 
-
 const recommendation3 = async function (req, res) {
   const artistId = req.params.artistId;
   const country = req.params.country;
@@ -180,7 +181,9 @@ const recommendation3 = async function (req, res) {
       JOIN Tags ON Tags.id = AT.tag_id
       WHERE A.mbid = '${artistId}'
       AND (A.country = '${country}' OR Tags.name = '${tag}')
-      AND A.listeners >= '${listeners * 0.5}' AND A.listeners <= '${listeners * 1.5}'
+      AND A.listeners >= '${listeners * 0.5}' AND A.listeners <= '${
+      listeners * 1.5
+    }'
       AND T.id != '${trackId}'
   )
       SELECT T.track_id AS track_id, T.track_name AS track_name, COUNT(*) AS numPlaylists, SUM(P.num_followers) AS totalFollowers
@@ -199,7 +202,6 @@ const recommendation3 = async function (req, res) {
     }
   );
 };
-
 
 // const recommendation3 = async function (req, res) {
 //   const artistId = req.params.artistId;
@@ -238,7 +240,6 @@ const recommendation3 = async function (req, res) {
 //     }
 //   );
 // };
-
 
 // Route for getting the changing popularity of music genres over time
 const getGenrePopularity = async (req, res) => {

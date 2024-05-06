@@ -24,8 +24,6 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { UserContext } from "../App";
 
-const config = require("../config.json");
-
 const BACKENDURL = process.env.BACKEND_URL
   ? process.env.BACKEND_URL
   : "http://localhost:8080";
@@ -112,9 +110,7 @@ export default function SongInfoPage() {
   };
 
   useEffect(() => {
-    fetch(
-      `http://${config.server_host}:${config.server_port}/getSongInfo/${id}`
-    )
+    fetch(`${BACKENDURL}/getSongInfo/${id}`)
       .then((res) => res.json())
       .then((resJson) => {
         const songReturn = resJson;
@@ -125,9 +121,7 @@ export default function SongInfoPage() {
   }, [id]);
 
   useEffect(() => {
-    fetch(
-      `http://${config.server_host}:${config.server_port}/getArtistInfo/${artistId}`
-    )
+    fetch(`${BACKENDURL}/getArtistInfo/${artistId}`)
       .then((res) => res.json())
       .then((resJson) => {
         const songReturn = resJson;
@@ -138,9 +132,7 @@ export default function SongInfoPage() {
   }, [artistId]);
 
   useEffect(() => {
-    fetch(
-      `http://${config.server_host}:${config.server_port}/getArtistTags/${artistId}`
-    )
+    fetch(`${BACKENDURL}/getArtistTags/${artistId}`)
       .then((res) => res.json())
       .then((resJson) => {
         const songReturn = resJson;
@@ -150,23 +142,21 @@ export default function SongInfoPage() {
 
   const recommendation1 = () => {
     fetch(
-      `http://${config.server_host}:${config.server_port}/recommendation1/${artistId}/${country}/${tag}/${listeners}`
+      `${BACKENDURL}/recommendation1/${artistId}/${country}/${tag}/${listeners}`
     )
       .then((res) => res.json())
       .then((resJson) => setRecommendation1Data(resJson));
   };
 
   const recommendation2 = () => {
-    fetch(
-      `http://${config.server_host}:${config.server_port}/recommendation2/${id}`
-    )
+    fetch(`${BACKENDURL}/recommendation2/${id}`)
       .then((res) => res.json())
       .then((resJson) => setRecommendation2Data(resJson));
   };
 
   const recommendation3 = () => {
     fetch(
-      `http://${config.server_host}:${config.server_port}/recommendation3/${artistId}/${country}/${tag}/${listeners}/${rec3Iterations}/${id}`
+      `${BACKENDURL}/recommendation3/${artistId}/${country}/${tag}/${listeners}/${rec3Iterations}/${id}`
     )
       .then((res) => res.json())
       .then((resJson) => {

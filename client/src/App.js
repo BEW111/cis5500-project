@@ -9,7 +9,6 @@ import NavBar from "./components/NavBar";
 import HomePage from "./pages/HomePage";
 import SongsPage from "./pages/SongsPage.tsx";
 import LoginPage from "./pages/LoginPage";
-// import SongInfoPage from "./pages/SongInfoPage2";
 import SongInfoPage from "./pages/SongInfoPage";
 import MapPage from "./pages/MapPage";
 import UserProfilePage from "./pages/UserProfilePage.tsx";

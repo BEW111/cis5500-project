@@ -27,36 +27,81 @@ resource "aws_cloudwatch_log_group" "ecs_app_family_log_group" {
   // Optionally you can set retention in days, the default is to keep logs forever
   // retention_in_days = 90
 }
-resource "aws_ecs_task_definition" "app" {
-  family                   = "app-family-cis5500"
+# resource "aws_ecs_task_definition" "app" {
+#   family                   = "app-family-cis5500"
+#   network_mode             = "awsvpc"
+#   requires_compatibilities = ["FARGATE"]
+#   cpu                      = "512"  # Adjust based on your needs
+#   memory                   = "2048" # Adjust based on your needs
+#   execution_role_arn       = data.aws_iam_role.ecs_task_execution_role.arn
+#   container_definitions = jsonencode([
+#     {
+#       name      = "frontend"
+#       image     = local.client_image_tag
+#       cpu       = 256
+#       memory    = 1024
+#       essential = true
+#       portMappings = [
+#         {
+#           containerPort = 3000
+#           hostPort      = 3000
+#           protocol      = "tcp"
+#         }
+#       ],
+#       environment = [
+#         { "name" : "BACKEND_URL", "value" : "http://backend.cis5500.local:8080" }
+#       ],
+#       logConfiguration = {
+#         logDriver = "awslogs"
+#         options = {
+#           awslogs-group         = "/ecs/app-family-cis5500"
+#           awslogs-region        = var.region
+#           awslogs-stream-prefix = "frontend"
+#         }
+#       }
+#     },
+#     {
+#       name      = "backend"
+#       image     = local.server_image_tag
+#       cpu       = 256
+#       memory    = 1024
+#       essential = true
+#       portMappings = [
+#         {
+#           containerPort = 8080
+#           hostPort      = 8080
+#           protocol      = "tcp"
+#         }
+#       ],
+#       environment = [
+#         { "name" : "RDS_HOST", "value" : var.RDS_HOST },
+#         { "name" : "RDS_PASSWORD", "value" : var.RDS_PASSWORD },
+#         { "name" : "GOOGLE_CLIENT_ID", "value" : var.GOOGLE_CLIENT_ID },
+#         { "name" : "GOOGLE_CLIENT_SECRET", "value" : var.GOOGLE_CLIENT_SECRET },
+#         { "name" : "SPOTIFY_CLIENT_ID", "value" : var.SPOTIFY_CLIENT_ID },
+#         { "name" : "SPOTIFY_CLIENT_SECRET", "value" : var.SPOTIFY_CLIENT_SECRET },
+#       ],
+#       logConfiguration = {
+#         logDriver = "awslogs"
+#         options = {
+#           awslogs-group         = "/ecs/app-family-cis5500"
+#           awslogs-region        = var.region
+#           awslogs-stream-prefix = "backend"
+#         }
+#       }
+#     }
+#   ])
+# }
+
+# Backend Task Definition
+resource "aws_ecs_task_definition" "backend" {
+  family                   = "backend-family-cis5500"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = "512"  # Adjust based on your needs
-  memory                   = "2048" # Adjust based on your needs
+  cpu                      = "256"
+  memory                   = "1024"
   execution_role_arn       = data.aws_iam_role.ecs_task_execution_role.arn
   container_definitions = jsonencode([
-    {
-      name      = "frontend"
-      image     = local.client_image_tag
-      cpu       = 256
-      memory    = 1024
-      essential = true
-      portMappings = [
-        {
-          containerPort = 3000
-          hostPort      = 3000
-          protocol      = "tcp"
-        }
-      ],
-      logConfiguration = {
-        logDriver = "awslogs"
-        options = {
-          awslogs-group         = "/ecs/app-family-cis5500"
-          awslogs-region        = var.region
-          awslogs-stream-prefix = "frontend"
-        }
-      }
-    },
     {
       name      = "backend"
       image     = local.server_image_tag
@@ -65,8 +110,8 @@ resource "aws_ecs_task_definition" "app" {
       essential = true
       portMappings = [
         {
-          containerPort = 8080
           hostPort      = 8080
+          containerPort = 8080
           protocol      = "tcp"
         }
       ],
@@ -77,6 +122,7 @@ resource "aws_ecs_task_definition" "app" {
         { "name" : "GOOGLE_CLIENT_SECRET", "value" : var.GOOGLE_CLIENT_SECRET },
         { "name" : "SPOTIFY_CLIENT_ID", "value" : var.SPOTIFY_CLIENT_ID },
         { "name" : "SPOTIFY_CLIENT_SECRET", "value" : var.SPOTIFY_CLIENT_SECRET },
+        { "name" : "FRONTEND_URL", "value" : "http://frontend.cis5500.local:3000" }
       ],
       logConfiguration = {
         logDriver = "awslogs"
@@ -84,6 +130,43 @@ resource "aws_ecs_task_definition" "app" {
           awslogs-group         = "/ecs/app-family-cis5500"
           awslogs-region        = var.region
           awslogs-stream-prefix = "backend"
+        }
+      }
+    }
+  ])
+}
+
+# Frontend Task Definition
+resource "aws_ecs_task_definition" "frontend" {
+  family                   = "frontend-family-cis5500"
+  network_mode             = "awsvpc"
+  requires_compatibilities = ["FARGATE"]
+  cpu                      = "256"
+  memory                   = "1024"
+  execution_role_arn       = data.aws_iam_role.ecs_task_execution_role.arn
+  container_definitions = jsonencode([
+    {
+      name      = "frontend"
+      image     = local.client_image_tag
+      cpu       = 256
+      memory    = 1024
+      essential = true
+      portMappings = [
+        {
+          hostPort      = 3000
+          containerPort = 3000
+          protocol      = "tcp"
+        }
+      ],
+      environment = [
+        { "name" : "BACKEND_URL", "value" : "http://backend.cis5500.local:8080" }
+      ],
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-group         = "/ecs/app-family-cis5500"
+          awslogs-region        = var.region
+          awslogs-stream-prefix = "frontend"
         }
       }
     }
@@ -103,18 +186,98 @@ data "aws_subnets" "default" {
 }
 
 
-resource "aws_ecs_service" "app_service" {
-  name            = "app-service-cis5500"
+# resource "aws_ecs_service" "app_service" {
+#   name            = "app-service-cis5500"
+#   cluster         = aws_ecs_cluster.cluster.id
+#   task_definition = aws_ecs_task_definition.app.arn
+#   desired_count   = 1 # Example count
+#   launch_type     = "FARGATE"
+
+#   network_configuration {
+#     subnets          = data.aws_subnets.default.ids
+#     assign_public_ip = true
+#   }
+
+#   service_registries {
+#     registry_arn   = aws_service_discovery_service.backend.arn
+#     container_name = "backend"
+#     container_port = 8080
+#   }
+# }
+
+# Backend Service
+resource "aws_ecs_service" "backend_service" {
+  name            = "backend-service-cis5500"
   cluster         = aws_ecs_cluster.cluster.id
-  task_definition = aws_ecs_task_definition.app.arn
-  desired_count   = 1 # Example count
+  task_definition = aws_ecs_task_definition.backend.arn
+  desired_count   = 1
   launch_type     = "FARGATE"
 
   network_configuration {
     subnets          = data.aws_subnets.default.ids
     assign_public_ip = true
   }
+
+  service_registries {
+    registry_arn   = aws_service_discovery_service.backend.arn
+    container_name = "backend"
+  }
 }
+
+# Frontend Service
+resource "aws_ecs_service" "frontend_service" {
+  name            = "frontend-service-cis5500"
+  cluster         = aws_ecs_cluster.cluster.id
+  task_definition = aws_ecs_task_definition.frontend.arn
+  desired_count   = 1
+  launch_type     = "FARGATE"
+
+  network_configuration {
+    subnets          = data.aws_subnets.default.ids
+    assign_public_ip = true
+  }
+
+  service_registries {
+    registry_arn   = aws_service_discovery_service.frontend.arn
+    container_name = "frontend"
+  }
+}
+
+// Service discovery
+resource "aws_service_discovery_private_dns_namespace" "main" {
+  name = "cis5500.local"
+  vpc  = data.aws_vpc.default.id
+}
+
+resource "aws_service_discovery_service" "backend" {
+  name = "backend"
+
+  dns_config {
+    namespace_id   = aws_service_discovery_private_dns_namespace.main.id
+    routing_policy = "MULTIVALUE"
+    dns_records {
+      ttl  = 10
+      type = "A"
+    }
+  }
+}
+
+resource "aws_service_discovery_service" "frontend" {
+  name = "frontend"
+
+  dns_config {
+    namespace_id   = aws_service_discovery_private_dns_namespace.main.id
+    routing_policy = "MULTIVALUE"
+    dns_records {
+      ttl  = 10
+      type = "A"
+    }
+  }
+}
+
+
+
+
 # So that the ECS role can execute tasks
 # For CREATING a role
 # resource "aws_iam_role" "ecs_task_execution_role" {

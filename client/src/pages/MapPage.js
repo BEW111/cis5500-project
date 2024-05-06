@@ -16,6 +16,8 @@ const BACKENDURL = process.env.BACKEND_URL
   : "http://localhost:8080";
 
 function MapPage() {
+  console.log(BACKENDURL);
+
   const [country, setCountry] = useState(null);
   const [stats, setStats] = useState({
     valid: false,

@@ -13,6 +13,7 @@ import SongInfoPage from "./pages/SongInfoPage";
 import MapPage from "./pages/MapPage";
 import UserProfilePage from "./pages/UserProfilePage.tsx";
 
+export const BACKENDURL = "http://localhost:8080";
 export const theme = createTheme({
   palette: {
     primary: {

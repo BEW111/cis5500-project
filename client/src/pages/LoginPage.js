@@ -7,12 +7,7 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState, useContext, useEffect } from "react";
-import { UserContext } from "../App";
-
-const config = require("../config.json");
-const BACKENDURL = config.BACKEND_URL
-  ? config.BACKEND_URL
-  : "http://localhost:8080";
+import { UserContext, BACKENDURL } from "../App";
 
 export default function LoginPage() {
   const { user, setUser } = useContext(UserContext);

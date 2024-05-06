@@ -24,10 +24,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import EditIcon from "@mui/icons-material/Edit";
 import { NavLink } from "react-router-dom";
 
-const config = require("../config.json");
-const BACKENDURL = config.BACKEND_URL
-  ? config.BACKEND_URL
-  : "http://localhost:8080";
+import { BACKENDURL } from "../App";
 interface Playlist {
   uplaylist_id: number;
   name: string;

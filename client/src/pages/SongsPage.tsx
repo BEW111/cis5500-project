@@ -9,15 +9,12 @@ import Autocomplete from "@mui/material/Autocomplete";
 import Grid from "@mui/material/Grid";
 import { debounce } from "@mui/material/utils";
 
+import { BACKENDURL } from "../App";
+
 interface SongResult {
   id: string;
   track_name: string;
 }
-
-const config = require("../config.json");
-const BACKENDURL = config.BACKEND_URL
-  ? config.BACKEND_URL
-  : "http://localhost:8080";
 
 export default function SongsPage() {
   // For autocomplete

@@ -11,10 +11,7 @@ import ArtistDetails from "../components/ArtistDetails";
 import GenreCard from "../components/GenreCard";
 import LocationMarker from "../components/LocationMarker";
 
-const config = require("../config.json");
-const BACKENDURL = config.BACKEND_URL
-  ? config.BACKEND_URL
-  : "http://localhost:8080";
+import { BACKENDURL } from "../App";
 
 function MapPage() {
   const [country, setCountry] = useState(null);

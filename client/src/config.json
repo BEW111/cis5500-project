@@ -2,5 +2,4 @@
   "server_host": "localhost",
   "server_port": "8080",
   "backend_url": "http://localhost:8080",
-  "backend_url_server": "http://backend.cis5500.local:8080"
 }

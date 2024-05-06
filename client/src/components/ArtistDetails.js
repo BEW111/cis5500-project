@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-const config = require("../config.json");
-const BACKENDURL = config.BACKEND_URL
-  ? config.BACKEND_URL
-  : "http://localhost:8080";
+import { BACKENDURL } from "../App";
 
 function ArtistDetails({ country }) {
   const [artists, setArtists] = useState([]);

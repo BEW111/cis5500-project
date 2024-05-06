@@ -22,8 +22,8 @@ const connection = mysql.createConnection({
 });
 connection.connect((err) => err && console.log(err));
 
-const FRONTENDURL = process.env.FRONTENDURL
-  ? process.env.FRONTENDURL
+const FRONTENDURL = process.env.FRONTEND_URL
+  ? process.env.FRONTEND_URL
   : "http://localhost:3000";
 
 router.get("/login/federated/google", passport.authenticate("google"));

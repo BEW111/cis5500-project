@@ -358,20 +358,19 @@ const getArtistStatsByCountry = async (req, res) => {
   const { country } = req.params;
 
   const query = `
-      WITH CanadianArtists AS (
-          SELECT mbid, country
-          FROM Artist
-          WHERE country = ?
-      )
-      SELECT
-          COUNT(t.id) AS total_tracks,
-          COUNT(pt.trackId) AS total_playlists,
-          AVG(ptc.track_count) AS avg_tracks_per_playlist
-      FROM CanadianArtists ca
-      JOIN Track t ON ca.mbid = t.artist_id
-      JOIN PlaylistTrack pt ON t.id = pt.trackId
-      JOIN PlaylistTrackCounts ptc ON pt.pid = ptc.pid
-      GROUP BY country;
+  WITH CanadianArtists AS (
+  SELECT mbid, country
+    FROM Artist
+    WHERE country = ?
+  )
+  SELECT
+    COUNT(pt.pid) AS total_playlists,
+    AVG(ptc.track_count) AS avg_tracks_per_playlist
+    FROM CanadianArtists ca
+    JOIN Track t ON ca.mbid = t.artist_id
+    JOIN PlaylistTrack pt ON t.id = pt.trackId
+    JOIN PlaylistTrackCounts ptc ON pt.pid = ptc.pid
+    GROUP BY country;
   `;
 
   connection.query(query, [country], (err, results) => {
